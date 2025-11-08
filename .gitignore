@@ -1,3 +1,9 @@
 Thumbs.db
 .DS_Store
+
 test.php
+.phpunit.result.cache
+
+/vendor/
+/data/tmp/
+/data/svg/
