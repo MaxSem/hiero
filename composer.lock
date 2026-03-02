@@ -4,61 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8666058efc315144318316bf8ff928f5",
+    "content-hash": "b8107af4b7cd8feab032724f466c9c30",
     "packages": [],
     "packages-dev": [
-        {
-            "name": "ircmaxell/php-yacc",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ircmaxell/PHP-Yacc.git",
-                "reference": "8da00ba52e74e314a54c1b7ad26a46ef6e6d5293"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ircmaxell/PHP-Yacc/zipball/8da00ba52e74e314a54c1b7ad26a46ef6e6d5293",
-                "reference": "8da00ba52e74e314a54c1b7ad26a46ef6e6d5293",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.1"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.93",
-                "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^10.5"
-            },
-            "default-branch": true,
-            "bin": [
-                "bin/phpyacc"
-            ],
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "lib/functions.php"
-                ],
-                "psr-4": {
-                    "PhpYacc\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Anthony Ferrara",
-                    "email": "ircmaxell@php.net"
-                }
-            ],
-            "description": "A PHP YACC Parser-Generator library",
-            "support": {
-                "issues": "https://github.com/ircmaxell/PHP-Yacc/issues",
-                "source": "https://github.com/ircmaxell/PHP-Yacc/tree/master"
-            },
-            "time": "2026-01-30T21:32:30+00:00"
-        },
         {
             "name": "myclabs/deep-copy",
             "version": "1.13.4",
@@ -1731,13 +1679,11 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ircmaxell/php-yacc": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.2"
+        "php": ">=8.3"
     },
     "platform-dev": {
         "ext-dom": "*"
