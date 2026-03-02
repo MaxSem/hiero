@@ -20,7 +20,7 @@ class Hieroglyph
 
     public static function isValid(string $normalizedString): bool
     {
-        static $gardinerToChar = Data::gardinerToChar();
+        static $gardinerToChar = Unicode::gardinerToChar();
 
         return isset($gardinerToChar[$normalizedString]);
     }

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero;
 
-class Data
+class Unicode
 {
     private static array $charToGardiner = [];
     private static array $gardinerToChar = [];

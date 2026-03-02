@@ -18,7 +18,11 @@ if (!is_dir($tmpDir)) {
 $charToGardiner = readUnicodeData(downloadUnicodeData());
 $gardinerToChar = array_flip($charToGardiner);
 $categories = getHieroglyphCategories($charToGardiner);
+
 $charSizes = processSvgFiles('/mnt/c/temp', $charToGardiner);
+if (!$charSizes) {
+    fprintf(STDERR, "Failed to read temporary svg files\n");
+}
 $bbox = findBoundingBox($charSizes);
 
 saveData(
@@ -93,77 +97,13 @@ function readUnicodeData(string $filename): array
 
 function getHieroglyphCategories(array $unicodeData): array
 {
+    $categories = [];
     foreach ($unicodeData as $char => $code) {
         $group = preg_replace('/^(Aa|[A-Z]).*$/', '$1', $code);
         $categories[$group][] = $code;
     }
 
     return $categories;
-}
-
-function processSvgFiles(string $dir, array $charToGardiner): array
-{
-    echo "Loading SVG file information...\n";
-
-    $destDir = __DIR__ . '/svg';
-    $result = [];
-
-    foreach (glob("$dir/*.svg") as $i => $filename) {
-        if ($i && $i % 100 === 0) {
-            echo "  $i\n";
-        }
-        if (!preg_match('/(\d{5})/', $filename, $matches)) {
-            continue;
-        }
-        $char = (int)$matches[1];
-        if ($char < FIRST_CHAR || $char > LAST_CHAR) {
-            continue;
-        }
-
-        $doc = new DOMDocument();
-        $doc->load($filename);
-        $nodes = $doc->getElementsByTagName('svg');
-        if (!$nodes->count()) {
-            bail("No <svg> element found in $filename");
-        }
-        $svg = $nodes[0];
-        $viewBox = $svg->getAttribute('viewBox');
-        if (!preg_match('/^-?\d+ -?\d+ \d+ \d+$/', $viewBox)) {
-            bail("No valid viewBox found in $filename");
-        }
-
-        $result[] = array_map('intval', explode(' ', $viewBox));
-
-        $svg->removeAttribute('xmlns');
-        $svg->removeAttribute('xmlns:xlink');
-        $svg->removeAttribute('version');
-
-        $contents = $doc->saveXML($svg);
-
-        if ($contents === false) {
-            bail("Error saving a transformed $filename");
-        }
-
-        file_put_contents("$destDir/$char.svg", $contents);
-    }
-
-    return $result;
-}
-
-function findBoundingBox(array $sizes): array
-{
-    $box = [PHP_INT_MAX, PHP_INT_MAX, 0, 0];
-
-    foreach ($sizes as $size) {
-        $box[0] = min($box[0], $size[0]);
-        $box[1] = min($box[1], $size[1]);
-        $box[2] = max($box[2], $size[2]);
-        $box[3] = max($box[3], $size[3]);
-    }
-
-    echo 'Bounding box: ' . json_encode($box, JSON_PRETTY_PRINT) . "\n";
-
-    return $box;
 }
 
 function saveData(string $filename, array $data): void

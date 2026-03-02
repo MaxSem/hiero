@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MaxSem\Hiero;
+namespace MaxSem\Hiero\Parse;
 
-final class Tokenizer
+final readonly class Tokenizer
 {
     /**
      * @return string[]
@@ -22,7 +22,7 @@ final class Tokenizer
         $result = [];
         foreach ($splitted as $token) {
             $token = trim($token);
-            if ($token !== '') {
+            if ($token !== '' && $token !== '-') {
                 $result[] = $token;
             }
         }
