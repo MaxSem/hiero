@@ -6,5 +6,4 @@ namespace MaxSem\Hiero\Render;
 
 interface Renderable
 {
-
 }

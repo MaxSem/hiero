@@ -6,7 +6,6 @@ namespace MaxSem\Hiero\Blocks;
 
 class EmptyBlock extends Block
 {
-
     public function markup(): string
     {
         return '';

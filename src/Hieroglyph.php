@@ -11,7 +11,7 @@ class Hieroglyph
         private string $modifiers,
     ) {
     }
-    
+
 
     public static function normalize(string $maybeHieroglyph): string
     {

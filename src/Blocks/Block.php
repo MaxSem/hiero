@@ -6,5 +6,5 @@ namespace MaxSem\Hiero\Blocks;
 
 abstract readonly class Block
 {
-    public abstract function markup(): string;
+    abstract public function markup(): string;
 }
