@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
-class EmptyBlock extends Block
+final readonly class EmptyBlock extends Block
 {
     public function markup(): string
     {
