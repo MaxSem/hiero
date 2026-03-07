@@ -19,18 +19,29 @@ $charToGardiner = readUnicodeData(downloadUnicodeData());
 $gardinerToChar = array_flip($charToGardiner);
 $categories = getHieroglyphCategories($charToGardiner);
 
-$charSizes = processSvgFiles('/mnt/c/temp', $charToGardiner);
-if (!$charSizes) {
-    fprintf(STDERR, "Failed to read temporary svg files\n");
-}
-$bbox = findBoundingBox($charSizes);
-
 saveData(
     'unicode.php',
     [
         'charToGardiner' => $charToGardiner,
         'gardinerToChar' => $gardinerToChar,
         'categories' => $categories,
+    ]
+);
+
+echo "Generating phonetics arrays.\n";
+$gardinerToPhonetic = readPhonetics(__DIR__ . '/phonetics.txt');
+$phoneticToGardiner = array_flip($gardinerToPhonetic);
+
+$phonetics = array_values($gardinerToPhonetic);
+$phoneticsLc = array_map(strtolower(...), $phonetics);
+$lowerCaseIndex = array_combine($phoneticsLc, $phonetics);
+
+saveData(
+    'phonetics.php',
+    [
+        'gardinerToPhonetic' => $gardinerToPhonetic,
+        'phoneticToGardiner' => $phoneticToGardiner,
+        'lowerCaseIndex' => $lowerCaseIndex,
     ]
 );
 
@@ -86,6 +97,7 @@ function readUnicodeData(string $filename): array
         }
 
         $name = ucfirst(strtolower($matches[1]));
+        $name = preg_replace('/(?<=[a-z])0+/i', '', $name);
 
         $result[$charNo] = $name;
     }
@@ -98,12 +110,35 @@ function readUnicodeData(string $filename): array
 function getHieroglyphCategories(array $unicodeData): array
 {
     $categories = [];
-    foreach ($unicodeData as $char => $code) {
+    foreach ($unicodeData as $code) {
         $group = preg_replace('/^(Aa|[A-Z]).*$/', '$1', $code);
         $categories[$group][] = $code;
     }
 
     return $categories;
+}
+
+function readPhonetics(string $filename): array
+{
+    $lines = file($filename) or bail("Could not read $filename");
+
+    $result = [];
+    foreach ($lines as $line) {
+        $line = trim($line);
+
+        if ($line === '' || $line[0] === '#') {
+            continue;
+        }
+
+        $parts = preg_split('/\s*=\s*/', $line, 2, PREG_SPLIT_NO_EMPTY);
+        if (count($parts) !== 2) {
+            bail("Could not parse line '$line'");
+        }
+
+        $result[$parts[0]] = $parts[1];
+    }
+
+    return $result;
 }
 
 function saveData(string $filename, array $data): void

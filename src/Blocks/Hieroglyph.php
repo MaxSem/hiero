@@ -11,6 +11,7 @@ final readonly class Hieroglyph extends Block
     public function __construct(
         public string $code,
         public HieroglyphModifiers $modifiers,
+        public ?string $originalMarkup = null,
     ) {
     }
 

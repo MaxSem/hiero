@@ -30,6 +30,12 @@ final readonly class Error
      */
     public const NOT_A_HIEROGLYPH = 'not-a-hieroglyph';
 
+    /**
+     * Invalid hieroglyph modifier: '$1'
+     * Example A1\foo
+     */
+    public const INVALID_MODIFIERS = 'invalid-modifiers';
+
     public function __construct(
         /**
          * @var mixed[][]|null Same format as debug_backtrace()

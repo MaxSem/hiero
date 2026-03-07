@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero;
 
-class Unicode
+final class Unicode
 {
     private static array $charToGardiner = [];
     private static array $gardinerToChar = [];
@@ -48,7 +48,7 @@ class Unicode
 
     private static function loadUnicode(): void
     {
-        $path = dirname(__DIR__) . '/data/unicode.php';
+        $path = __DIR__ . '/../data/unicode.php';
 
         [
             'charToGardiner' => self::$charToGardiner,

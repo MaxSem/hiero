@@ -12,6 +12,8 @@ use MaxSem\Hiero\Blocks\Line;
 use MaxSem\Hiero\Blocks\VerbatimText;
 use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;
+use MaxSem\Hiero\Phonetics;
+use MaxSem\Hiero\Unicode;
 
 readonly class Parser
 {
@@ -109,12 +111,55 @@ readonly class Parser
             $output->addError(Error::NOT_A_HIEROGLYPH, $content);
             return new VerbatimText($content);
         }
+        $symbol = $matches[1];
+        $modifiers = $matches[2];
 
-        return new Hieroglyph($matches[1], $this->parseModifiers($matches[2], $output));
+        $normalized = ucfirst(strtolower($symbol));
+        if (isset(Unicode::gardinerToChar()[$normalized])) {
+            return new Hieroglyph($normalized, $this->parseModifiers($modifiers, $output), $symbol);
+        }
+
+        $lc = strtolower($symbol);
+        $phonetic = Phonetics::lowerCaseIndex()[$lc] ?? null;
+        if ($phonetic === null) {
+            $output->addError(Error::NOT_A_HIEROGLYPH, $symbol);
+            return new VerbatimText($content);
+        }
+
+        return new Hieroglyph($phonetic, $this->parseModifiers($modifiers, $output), $symbol);
     }
+
+    private const ROTATION_TABLE = [
+        'r1' => -90,
+        'r2' => -180,
+        'r3' => -270,
+        't1' => 90,
+        't2' => 180,
+        't3' => 270,
+    ];
 
     public function parseModifiers(string $markup, Output $output): HieroglyphModifiers
     {
-        return new HieroglyphModifiers($markup, 0, false);
+        $rotation = 0;
+        $mirror = false;
+
+        if (preg_match('/^\\\\([rt][1-3])$/', $markup, $matches)) {
+            $match = $matches[1];
+            $angle = self::ROTATION_TABLE[$match] ?? null;
+            if ($angle === null) {
+                throw new HieroException("parseModifiers(): rotation error with input '$markup'");
+            }
+            if ($angle > 0) {
+                $mirror = true;
+            }
+            $rotation = abs($angle);
+        } elseif ($markup === '\\') {
+            $mirror = true;
+        } elseif ($markup !== '') {
+            $output->addError(Error::INVALID_MODIFIERS, $markup);
+            $markup = '';
+        }
+
+        return new HieroglyphModifiers($markup, $rotation, $mirror);
     }
 }

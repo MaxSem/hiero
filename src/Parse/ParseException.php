@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Parse;
 
-use MaxSem\Hiero\HieroException;
+use MaxSem\Hiero\LocalizableException;
 
-class ParseException extends HieroException
+class ParseException extends LocalizableException
 {
     public function __construct(
         public readonly Error $error,
     ) {
-        parent::__construct('Parse error');
+        parent::__construct($error, 'Parse error: ' . $error->key);
     }
 }

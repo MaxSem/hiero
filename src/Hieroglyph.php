@@ -6,18 +6,6 @@ namespace MaxSem\Hiero;
 
 class Hieroglyph
 {
-    public function __construct(
-        private string $gardinerCode,
-        private string $modifiers,
-    ) {
-    }
-
-
-    public static function normalize(string $maybeHieroglyph): string
-    {
-        return mb_ucfirst(mb_strtolower($maybeHieroglyph));
-    }
-
     public static function isValid(string $normalizedString): bool
     {
         static $gardinerToChar = Unicode::gardinerToChar();
