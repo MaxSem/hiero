@@ -4,4 +4,19 @@
     <file>test</file>
 
     <rule ref="PSR12"/>
+
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+
+    <rule ref="Generic.ControlStructures.DisallowYodaConditions"/>
+
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName"/>
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+
+    <rule ref="Generic.Files.EndFileNewline"/>
+    <rule ref="Generic.Files.ExecutableFile"/>
+    <rule ref="Generic.Files.InlineHTML"/>
+
+    <rule ref="Generic.PHP.RequireStrictTypes"/>
+
+    <rule ref="Generic.VersionControl.GitMergeConflict"/>
 </ruleset>
