@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MaxSem\Hiero\Test;
 
 use MaxSem\Hiero\Blocks\Cartouche;
+use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Parse\Input;
 use PHPUnit\Framework\TestCase;
 
@@ -84,6 +85,8 @@ class InputTest extends TestCase
             [ ['foo', '<', 'a', '<', 'b', 'c', '>', '1>'], Cartouche::class, 'a<bc>', 1 ],
             [ ['foo','bar', '<', 'a', '<', 'b', 'c', '>', '1>'], Cartouche::class, 'a<bc>', 2 ],
             [ ['<', 'a', '<', 'b', '!', 'c', '>', '1>'], Cartouche::class, null ],
+
+            [ ['(', 'a', '<', 'b', 'c', '>', ')'], Parentheses::class, 'a<bc>' ],
         ];
     }
 

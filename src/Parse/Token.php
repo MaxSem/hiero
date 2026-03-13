@@ -6,6 +6,7 @@ namespace MaxSem\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Cartouche;
 use MaxSem\Hiero\Blocks\Juxtaposition;
+use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Blocks\Subdivision;
 
 class Token
@@ -17,6 +18,8 @@ class Token
         '<h1' => Cartouche::class,
         '<h2' => Cartouche::class,
         '<h3' => Cartouche::class,
+
+        '(' => Parentheses::class,
     ];
 
     public const BLOCK_CLOSERS = [
@@ -26,6 +29,8 @@ class Token
         'h1>' => Cartouche::class,
         'h2>' => Cartouche::class,
         'h3>' => Cartouche::class,
+
+        ')' => Parentheses::class,
     ];
 
     public const OPERATORS = [
