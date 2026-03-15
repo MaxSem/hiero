@@ -1,5 +1,8 @@
-.PHONY: test
+.PHONY: all
 
+all: test phpcs phpstan
+
+.PHONY: test
 test:
 	vendor/bin/phpunit test
 
