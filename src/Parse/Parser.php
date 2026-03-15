@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MaxSem\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Block;
+use MaxSem\Hiero\Blocks\BoundedBlock;
 use MaxSem\Hiero\Blocks\EmptyBlock;
 use MaxSem\Hiero\Blocks\Document;
 use MaxSem\Hiero\Blocks\Hieroglyph;
@@ -65,13 +66,18 @@ readonly class Parser
 
         while (!$input->eof()) {
             $cur = $input->current();
+            if ($cur === null) {
+                throw new HieroException('Logic error: eof() and current() disagree');
+            }
 
             $class = Token::BLOCK_OPENERS[$cur] ?? null;
             if ($class) {
+                /** @var class-string<BoundedBlock> $class */
+
                 $innerInput = $input->findMatchingCloser($class);
 
                 $closer = $input->next();
-                if (!$innerInput) {
+                if ($innerInput === null) {
                     $output->addError(Error::UNMATCHED_OPENER, $cur);
                 } else {
                     $result[] = new $class($cur, $innerInput, $closer);

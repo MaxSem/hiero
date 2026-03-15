@@ -15,6 +15,9 @@ final class Phonetics
     /** @var array<string, string> */
     private static array $lowerCaseIndex = [];
 
+    /**
+     * @return array<string, string>
+     */
     public static function gardinerToPhonetic(): array
     {
         if (!self::$gardinerToPhonetic) {
@@ -24,6 +27,9 @@ final class Phonetics
         return self::$gardinerToPhonetic;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function phoneticToGardiner(): array
     {
         if (!self::$phoneticToGardiner) {
@@ -33,6 +39,9 @@ final class Phonetics
         return self::$phoneticToGardiner;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function lowerCaseIndex(): array
     {
         if (!self::$lowerCaseIndex) {

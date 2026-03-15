@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Parse;
 
+use MaxSem\Hiero\HieroException;
+
 final readonly class Tokenizer
 {
     /**
@@ -18,6 +20,9 @@ final readonly class Tokenizer
         }
 
         $splitted = preg_split('/(\s+|[-:*!])/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
+        if (!is_array($splitted)) {
+            throw new HieroException('Regexp error');
+        }
 
         $result = [];
         foreach ($splitted as $token) {

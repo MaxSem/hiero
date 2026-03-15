@@ -8,3 +8,6 @@ phpcs:
 
 phpcbf:
 	 vendor/bin/phpcbf --standard=phpcs.xml
+
+phpstan:
+	vendor/bin/phpstan

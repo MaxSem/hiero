@@ -6,10 +6,12 @@ namespace MaxSem\Hiero\Blocks;
 
 abstract readonly class BoundedBlock extends Container
 {
+    /**
+     * @param Block[] $innerBlocks
+     */
     public function __construct(
         public string $opener,
-        /** @var Block[] */
-        public array $innerBlocks,
+        array $innerBlocks,
         public string $closer,
     ) {
         parent::__construct($innerBlocks);

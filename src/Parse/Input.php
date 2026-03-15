@@ -12,7 +12,7 @@ class Input
     public function __construct(
         /** @var string[] */
         private readonly array $tokens,
-        private readonly int $start = 0,
+        int $start = 0,
         int $end = -1,
     ) {
         $this->end = $end >= 0

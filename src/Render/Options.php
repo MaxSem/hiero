@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Render;
 
-class RenderOptions
+class Options
 {
     public function __construct(
         public readonly float $lineSpacing = 10.0,

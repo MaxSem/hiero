@@ -6,8 +6,11 @@ namespace MaxSem\Hiero;
 
 final class Unicode
 {
+    /** @var array<int, string> */
     private static array $charToGardiner = [];
+    /** @var array <string, int> */
     private static array $gardinerToChar = [];
+    /** @var array<string, string[]> */
     private static array $categories = [];
 
     /**

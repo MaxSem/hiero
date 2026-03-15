@@ -19,6 +19,7 @@
     "require-dev": {
         "ext-dom": "*",
         "phpunit/phpunit": "^10.5",
-        "squizlabs/php_codesniffer": "^4.0"
+        "squizlabs/php_codesniffer": "^4.0",
+        "phpstan/phpstan": "^2.1"
     }
 }
