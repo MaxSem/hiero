@@ -9,8 +9,8 @@ except ModuleNotFoundError:
     print('The FontForge Python package is missing, try apt install python3-fontforge or something...', file=sys.stderr)
     exit(1)
 
-START_CHAR = 0x13000
-END_CHAR = 0x1342F
+FIRST_CHAR = 0x13000
+LAST_CHAR = 0x1342F
 
 fontPath = 'data/tmp/noto.ttf'
 destDir = 'data/tmp'
@@ -29,7 +29,7 @@ def exportFont(fontPath, destDir):
     print(font.familyname, font.version)
 
     count = 0
-    for char in range(START_CHAR, END_CHAR + 1):
+    for char in range(FIRST_CHAR, LAST_CHAR + 1):
         try:
             glyph = font[char]
         except TypeError:

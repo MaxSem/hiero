@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
-final readonly class EntireText extends Container
+final readonly class Document extends Container
 {
     public function separator(): string
     {

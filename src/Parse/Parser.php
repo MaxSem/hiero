@@ -6,7 +6,7 @@ namespace MaxSem\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Block;
 use MaxSem\Hiero\Blocks\EmptyBlock;
-use MaxSem\Hiero\Blocks\EntireText;
+use MaxSem\Hiero\Blocks\Document;
 use MaxSem\Hiero\Blocks\Hieroglyph;
 use MaxSem\Hiero\Blocks\Line;
 use MaxSem\Hiero\Blocks\VerbatimText;
@@ -47,7 +47,7 @@ readonly class Parser
             $lines[] = new Line([new EmptyBlock()]);
         }
 
-        $output->setResult(new EntireText($lines));
+        $output->setResult(new Document($lines));
 
         return $output;
     }
