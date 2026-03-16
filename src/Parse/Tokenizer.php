@@ -8,6 +8,8 @@ use MaxSem\Hiero\HieroException;
 
 final readonly class Tokenizer
 {
+    private const DELIMITER_REGEX = '/([-\s]+)/';
+
     /**
      * @return string[]
      */
@@ -19,17 +21,20 @@ final readonly class Tokenizer
             return [];
         }
 
-        $splitted = preg_split('/(\s+|[-:*!])/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $splitted = preg_split('/(\s*[*:!]\s*|[-\s]+)/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
         if (!is_array($splitted)) {
             throw new HieroException('Regexp error');
         }
 
         $result = [];
         foreach ($splitted as $token) {
-            $token = trim($token);
-            if ($token !== '' && $token !== '-') {
-                $result[] = $token;
+            if ($token === '') {
+                continue;
             }
+            if (preg_replace(self::DELIMITER_REGEX, '', $token) === '') {
+                $token = Token::SEPARATOR;
+            }
+            $result[] = trim($token);
         }
 
         return $result;

@@ -44,4 +44,5 @@ class Token
     ];
 
     public const EOL = '!';
+    public const SEPARATOR = '-';
 }
