@@ -7,24 +7,26 @@ namespace MaxSem\Hiero\Parse;
 class Input
 {
     private int $pos;
-    private readonly int $end;
+    private readonly int $start;
+    private readonly int $length;
 
     public function __construct(
         /** @var string[] */
         private readonly array $tokens,
         int $start = 0,
-        int $end = -1,
+        int $length = -1,
     ) {
-        $this->end = $end >= 0
-            ? $end
-            : count($this->tokens) - 1;
+        $this->start = $start;
+        $this->length = $length >= 0
+            ? $length
+            : count($this->tokens) - $start;
 
         $this->pos = $start;
     }
 
     public function eof(): bool
     {
-        return $this->pos > $this->end;
+        return $this->pos >= $this->start + $this->length;
     }
 
     public function current(): ?string
@@ -45,7 +47,7 @@ class Input
     public function findMatchingCloser(string $closerClass): ?Input
     {
         $stack = [];
-        for ($pos = $this->pos + 1; $pos <= $this->end; $pos++) {
+        for ($pos = $this->pos + 1; $pos < $this->start + $this->length; $pos++) {
             $token = $this->tokens[$pos];
 
             if ($token === Token::EOL) {
@@ -77,7 +79,7 @@ class Input
 
     private function subInput(int $end): Input
     {
-        $result = new Input($this->tokens, $this->pos, $end);
+        $result = new Input($this->tokens, $this->pos, $end - $this->pos + 1);
         $this->pos = $end + 1;
 
         return $result;
