@@ -7,16 +7,14 @@ namespace MaxSem\Hiero\Parse;
 class Input
 {
     private int $pos;
-    private readonly int $start;
     private readonly int $length;
 
     public function __construct(
         /** @var string[] */
         private readonly array $tokens,
-        int $start = 0,
+        private readonly int $start = 0,
         int $length = -1,
     ) {
-        $this->start = $start;
         $this->length = $length >= 0
             ? $length
             : count($this->tokens) - $start;
