@@ -20,6 +20,12 @@
         "ext-dom": "*",
         "phpunit/phpunit": "^10.5",
         "squizlabs/php_codesniffer": "^4.0",
-        "phpstan/phpstan": "^2.1"
+        "phpstan/phpstan": "^2.1",
+        "slevomat/coding-standard": "^8.28"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }

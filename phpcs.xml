@@ -19,4 +19,14 @@
     <rule ref="Generic.PHP.RequireStrictTypes"/>
 
     <rule ref="Generic.VersionControl.GitMergeConflict"/>
+
+    <rule ref="SlevomatCodingStandard.Arrays.DisallowPartiallyKeyed"/>
+    <rule ref="SlevomatCodingStandard.Commenting.ForbiddenAnnotations">
+        <properties>
+            <property name="forbiddenAnnotations" type="array">
+                <element value="@author"/>  <!-- Collective code ownership -->
+            </property>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Commenting.UselessFunctionDocComment"/>
 </ruleset>
