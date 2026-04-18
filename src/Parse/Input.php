@@ -75,6 +75,26 @@ class Input
         return null;
     }
 
+    /**
+     * @return iterable<self>
+     */
+    public function lines(): iterable
+    {
+        $start = $this->pos;
+        while (!$this->eof()) {
+            if ($this->tokens[$this->pos] === Token::EOL) {
+                if ($this->pos > $start) {
+                    yield new self($this->tokens, $start, $this->pos - $start);
+                }
+                $start = $this->pos + 1;
+            }
+            $this->pos++;
+        }
+        if ($this->pos > $start) {
+            yield new self($this->tokens, $start, $this->pos - $start);
+        }
+    }
+
     private function subInput(int $end): Input
     {
         $result = new Input($this->tokens, $this->pos, $end - $this->pos + 1);

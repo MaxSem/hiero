@@ -28,6 +28,11 @@ final class Output
         $this->result = $result;
     }
 
+    public function getResult(): ?Block
+    {
+        return $this->result;
+    }
+
     /**
      * @throws ParseException
      */

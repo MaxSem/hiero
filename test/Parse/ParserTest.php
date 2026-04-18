@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Test;
 
+use MaxSem\Hiero\Blocks\Document;
 use MaxSem\Hiero\Blocks\Hieroglyph;
+use MaxSem\Hiero\Blocks\Juxtaposition;
+use MaxSem\Hiero\Blocks\Line;
+use MaxSem\Hiero\Blocks\Subdivision;
 use MaxSem\Hiero\Blocks\VerbatimText;
 use MaxSem\Hiero\HieroglyphModifiers;
 use MaxSem\Hiero\Parse\Error;
@@ -128,6 +132,88 @@ class ParserTest extends TestCase
                 'modifiers' => null,
                 'text' => '\\r1',
                 'expectedError' => Error::NOT_A_HIEROGLYPH,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideOperators
+     */
+    public function testOperators(string $input, callable $assert): void
+    {
+        $parser = new Parser(new Tokenizer(), new ParseOptions());
+        $output = $parser->parse($input);
+        $result = $output->getResult();
+
+        self::assertInstanceOf(Document::class, $result);
+        self::assertEmpty($output->getErrors());
+
+        $line = $result->innerBlocks[0];
+        self::assertInstanceOf(Line::class, $line);
+
+        $assert($line->innerBlocks);
+    }
+
+    public static function provideOperators(): array
+    {
+        return [
+            'juxtaposition' => [
+                'A1*B1',
+                function (array $blocks): void {
+                    self::assertCount(1, $blocks);
+                    self::assertInstanceOf(Juxtaposition::class, $blocks[0]);
+                    self::assertCount(2, $blocks[0]->innerBlocks);
+                    self::assertSame('A1', $blocks[0]->innerBlocks[0]->code);
+                    self::assertSame('B1', $blocks[0]->innerBlocks[1]->code);
+                },
+            ],
+            'subdivision' => [
+                'A1:B1',
+                function (array $blocks): void {
+                    self::assertCount(1, $blocks);
+                    self::assertInstanceOf(Subdivision::class, $blocks[0]);
+                    self::assertCount(2, $blocks[0]->innerBlocks);
+                    self::assertSame('A1', $blocks[0]->innerBlocks[0]->code);
+                    self::assertSame('B1', $blocks[0]->innerBlocks[1]->code);
+                },
+            ],
+            'precedence: * binds tighter than :' => [
+                'A1*B1:C1*D1',
+                function (array $blocks): void {
+                    self::assertCount(1, $blocks);
+                    $sub = $blocks[0];
+                    self::assertInstanceOf(Subdivision::class, $sub);
+                    self::assertCount(2, $sub->innerBlocks);
+                    self::assertInstanceOf(Juxtaposition::class, $sub->innerBlocks[0]);
+                    self::assertInstanceOf(Juxtaposition::class, $sub->innerBlocks[1]);
+                    self::assertSame('A1', $sub->innerBlocks[0]->innerBlocks[0]->code);
+                    self::assertSame('B1', $sub->innerBlocks[0]->innerBlocks[1]->code);
+                    self::assertSame('C1', $sub->innerBlocks[1]->innerBlocks[0]->code);
+                    self::assertSame('D1', $sub->innerBlocks[1]->innerBlocks[1]->code);
+                },
+            ],
+            'separator splits groups' => [
+                'A1*B1 C1*D1',
+                function (array $blocks): void {
+                    self::assertCount(2, $blocks);
+                    self::assertInstanceOf(Juxtaposition::class, $blocks[0]);
+                    self::assertInstanceOf(Juxtaposition::class, $blocks[1]);
+                    self::assertSame('A1', $blocks[0]->innerBlocks[0]->code);
+                    self::assertSame('B1', $blocks[0]->innerBlocks[1]->code);
+                    self::assertSame('C1', $blocks[1]->innerBlocks[0]->code);
+                    self::assertSame('D1', $blocks[1]->innerBlocks[1]->code);
+                },
+            ],
+            'chained juxtaposition' => [
+                'A1*B1*C1',
+                function (array $blocks): void {
+                    self::assertCount(1, $blocks);
+                    self::assertInstanceOf(Juxtaposition::class, $blocks[0]);
+                    self::assertCount(3, $blocks[0]->innerBlocks);
+                    self::assertSame('A1', $blocks[0]->innerBlocks[0]->code);
+                    self::assertSame('B1', $blocks[0]->innerBlocks[1]->code);
+                    self::assertSame('C1', $blocks[0]->innerBlocks[2]->code);
+                },
             ],
         ];
     }

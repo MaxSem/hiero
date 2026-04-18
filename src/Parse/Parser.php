@@ -16,6 +16,11 @@ use MaxSem\Hiero\HieroglyphModifiers;
 use MaxSem\Hiero\Phonetics;
 use MaxSem\Hiero\Unicode;
 
+/**
+ * Magic that turns input text into an AST of blocks.
+ *
+ * Readonly to ensure statelessness so that it can safely parse recursively.
+ */
 readonly class Parser
 {
     public function __construct(
@@ -25,6 +30,8 @@ readonly class Parser
     }
 
     /**
+     * Ma
+     *
      * @throws ParseException
      */
     public function parse(string $content): Output
@@ -35,8 +42,8 @@ readonly class Parser
         $output = new Output($this->options);
 
         $lines = [];
-        while (!$input->eof()) {
-            $blocks = $this->parseRecursive($input, $output);
+        foreach ($input->lines() as $line) {
+            $blocks = $this->parseRecursive($line, $output);
             if (!$blocks) {
                 $blocks = [new EmptyBlock()];
             }
@@ -63,6 +70,9 @@ readonly class Parser
     private function parseRecursive(Input $input, Output $output): array
     {
         $result = [];
+        $blocks = [];
+        $operators = [];
+        $lastWasBlock = false;
 
         while (!$input->eof()) {
             $cur = $input->current();
@@ -70,19 +80,28 @@ readonly class Parser
                 throw new HieroException('Logic error: eof() and current() disagree');
             }
 
+            if ($cur === Token::SEPARATOR) {
+                $this->flushGroup($blocks, $operators, $result);
+                $blocks = [];
+                $operators = [];
+                $lastWasBlock = false;
+                $input->next();
+                continue;
+            }
+
             $class = Token::BLOCK_OPENERS[$cur] ?? null;
             if ($class) {
                 /** @var class-string<BoundedBlock> $class */
-
                 $innerInput = $input->findMatchingCloser($class);
-
-                $closer = $input->next();
                 if ($innerInput === null) {
                     $output->addError(Error::UNMATCHED_OPENER, $cur);
+                    $input->next();
                 } else {
-                    $result[] = new $class($cur, $innerInput, $closer);
+                    $closer = $input->current();
+                    $input->next();
+                    $blocks[] = new $class($cur, $this->parseRecursive($innerInput, $output), $closer);
+                    $lastWasBlock = true;
                 }
-
                 continue;
             }
 
@@ -90,11 +109,16 @@ readonly class Parser
             if ($class) {
                 $output->addError(Error::UNMATCHED_CLOSER, $cur);
                 $input->next();
+                continue;
             }
 
-            $operator = Token::OPERATORS[$cur] ?? null;
-            if ($operator) {
-                // todo
+            if (isset(Token::OPERATORS[$cur])) {
+                if ($lastWasBlock) {
+                    $operators[] = $cur;
+                    $lastWasBlock = false;
+                }
+                $input->next();
+                continue;
             }
 
             if ($cur === Token::EOL) {
@@ -102,10 +126,85 @@ readonly class Parser
             }
 
             // assume it's a hieroglyph
-            $result[] = $this->parseHieroglyph($cur, $output);
+            $blocks[] = $this->parseHieroglyph($cur, $output);
+            $lastWasBlock = true;
+            $input->next();
         }
 
+        $this->flushGroup($blocks, $operators, $result);
+
         return $result;
+    }
+
+    /**
+     * @param Block[] $blocks
+     * @param string[] $operators
+     * @param Block[] $result
+     */
+    private function flushGroup(array $blocks, array $operators, array &$result): void
+    {
+        if (!$blocks) {
+            return;
+        }
+        $operators = array_slice($operators, 0, count($blocks) - 1);
+        if (!$operators) {
+            array_push($result, ...$blocks);
+            return;
+        }
+        $result[] = $this->buildOperatorTree($blocks, $operators);
+    }
+
+    /**
+     * Recursively builds an operator tree from a flat sequence of blocks and operators,
+     * respecting operator precedence. Lower-precedence operators become the outermost nodes.
+     *
+     * @param non-empty-array<Block> $blocks
+     * @param string[] $operators  length must equal count($blocks) - 1
+     */
+    private function buildOperatorTree(array $blocks, array $operators): Block
+    {
+        if (!$operators) {
+            return $blocks[0];
+        }
+
+        $minPrec = PHP_INT_MAX;
+        foreach ($operators as $op) {
+            $prec = Token::OPERATOR_PRECEDENCE[$op];
+            if ($prec < $minPrec) {
+                $minPrec = $prec;
+            }
+        }
+
+        $opClass = null;
+        foreach ($operators as $op) {
+            if (Token::OPERATOR_PRECEDENCE[$op] === $minPrec) {
+                $opClass = Token::OPERATORS[$op];
+                break;
+            }
+        }
+
+        $currentBlocks = [$blocks[0]];
+        $currentOps = [];
+        $groups = [];
+
+        for ($i = 0, $len = count($operators); $i < $len; $i++) {
+            if (Token::OPERATOR_PRECEDENCE[$operators[$i]] === $minPrec) {
+                $groups[] = [$currentBlocks, $currentOps];
+                $currentBlocks = [$blocks[$i + 1]];
+                $currentOps = [];
+            } else {
+                $currentOps[] = $operators[$i];
+                $currentBlocks[] = $blocks[$i + 1];
+            }
+        }
+        $groups[] = [$currentBlocks, $currentOps];
+
+        $innerBlocks = array_map(
+            fn (array $group) => $this->buildOperatorTree($group[0], $group[1]),
+            $groups
+        );
+
+        return new $opClass($innerBlocks);
     }
 
     /**

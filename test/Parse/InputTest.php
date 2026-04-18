@@ -7,6 +7,7 @@ namespace MaxSem\Hiero\Test;
 use MaxSem\Hiero\Blocks\Cartouche;
 use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Parse\Input;
+use MaxSem\Hiero\Parse\Tokenizer;
 use PHPUnit\Framework\TestCase;
 
 class InputTest extends TestCase
@@ -87,6 +88,35 @@ class InputTest extends TestCase
             [ ['<', 'a', '<', 'b', '!', 'c', '>', '1>'], Cartouche::class, null ],
 
             [ ['(', 'a', '<', 'b', 'c', '>', ')'], Parentheses::class, 'a<bc>' ],
+        ];
+    }
+
+
+    /**
+     * @param string[] $expected
+     * @dataProvider provideLines
+     */
+    public function testLines(string $text, array $expected): void
+    {
+        $tokens = (new Tokenizer())->tokenize($text);
+        $input = new Input($tokens);
+        $lines = iterator_to_array($input->lines());
+        $lines = array_map(fn (Input $in) => $this->inputToString($in), $lines);
+        self::assertEquals($expected, $lines);
+    }
+
+    public static function provideLines(): array
+    {
+        return [
+            ['', []],
+            ['A1', ['A1']],
+            ['A1-A2', ['A1-A2']],
+            ['A1!', ['A1']],
+            ['A1!B1', ['A1', 'B1']],
+            ['A1!B1!', ['A1', 'B1']],
+            ['A1-A2!B1-B2', ['A1-A2', 'B1-B2']],
+            ['A1-A2!B1-B2!C1', ['A1-A2', 'B1-B2', 'C1']],
+            ['A1-A2!B1-B2!C1!', ['A1-A2', 'B1-B2', 'C1']],
         ];
     }
 
