@@ -2,10 +2,15 @@
     "name": "maxsem/hiero",
     "description": "Egyptian hieroglyphic text to SVG renderer",
     "type": "library",
+    "license": "MIT",
     "autoload": {
         "psr-4": {
             "MaxSem\\Hiero\\": "src/"
         }
+    },
+    "autoload-dev" : {
+        "psr-4": {
+          "Tests\\Hiero\\" : "./tests"}
     },
     "authors": [
         {
@@ -14,10 +19,11 @@
         }
     ],
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.3",
+        "ext-dom": "*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
-        "ext-dom": "*",
         "phpunit/phpunit": "^10.5",
         "squizlabs/php_codesniffer": "^4.0",
         "phpstan/phpstan": "^2.1",

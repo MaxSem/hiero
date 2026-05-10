@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset name="CustomStandard">
     <file>src</file>
-    <file>test</file>
+    <file>tests</file>
 
     <rule ref="PSR12"/>
 
@@ -25,6 +25,7 @@
         <properties>
             <property name="forbiddenAnnotations" type="array">
                 <element value="@author"/>  <!-- Collective code ownership -->
+                <element value="@package"/> <!-- Namespaces -->
             </property>
         </properties>
     </rule>

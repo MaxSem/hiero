@@ -13,28 +13,22 @@ final class Unicode
     /** @var array<string, string[]> */
     private static array $categories = [];
 
-    /**
-     * @return array<int, string>
-     */
-    public static function charToGardiner(): array
-    {
-        if (!self::$charToGardiner) {
-            self::loadUnicode();
-        }
-
-        return self::$charToGardiner;
-    }
-
-    /**
-     * @return array<string, int>
-     */
-    public static function gardinerToChar(): array
+    public static function gardinerToCodePoint(string $gardinerCode): ?int
     {
         if (!self::$gardinerToChar) {
             self::loadUnicode();
         }
 
-        return self::$gardinerToChar;
+        return self::$gardinerToChar[$gardinerCode] ?? null;
+    }
+
+    public static function codePointToGardiner(int $codePoint): ?string
+    {
+        if (!self::$charToGardiner) {
+            self::loadUnicode();
+        }
+
+        return self::$charToGardiner[$codePoint] ?? null;
     }
 
     /**

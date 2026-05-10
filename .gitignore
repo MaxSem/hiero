@@ -3,6 +3,7 @@ Thumbs.db
 .idea
 
 test.php
+test.svg
 .phpunit.result.cache
 
 /vendor/

@@ -1,0 +1,57 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MaxSem\Hiero;
+
+final readonly class ViewBox
+{
+    public function __construct(
+        public int $minX,
+        public int $minY,
+        public int $width,
+        public int $height,
+    ) {
+    }
+
+    public function rotate90deg(): self
+    {
+        return new self($this->minY, $this->minX, $this->height, $this->width);
+    }
+
+    public function shift(int $x, int $y): self
+    {
+        return new self($this->minX + $x, $this->minY + $y, $this->width, $this->height);
+    }
+
+    /**
+     * @param ViewBox[] $viewBoxes
+     */
+    public static function maxHeight(array $viewBoxes): int
+    {
+        $maxHeight = 0;
+        foreach ($viewBoxes as $viewBox) {
+            $maxHeight = max($maxHeight, $viewBox->height);
+        }
+
+        return $maxHeight;
+    }
+
+    /**
+     * @param ViewBox[] $viewBoxes
+     */
+    public static function maxWidth(array $viewBoxes): int
+    {
+        $maxWidth = 0;
+        foreach ($viewBoxes as $viewBox) {
+            $maxWidth = max($maxWidth, $viewBox->width);
+        }
+
+        return $maxWidth;
+    }
+
+    public function toString(): string
+    {
+        return "{$this->minX} {$this->minY} {$this->width} {$this->height}";
+    }
+}

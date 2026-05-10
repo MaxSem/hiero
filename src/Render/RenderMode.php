@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Render;
 
-enum Mode
+enum RenderMode
 {
     case SVG;
     case Unicode;

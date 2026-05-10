@@ -15,6 +15,28 @@ final class Phonetics
     /** @var array<string, string> */
     private static array $lowerCaseIndex = [];
 
+    public static function normalize(string $phonetic): ?string
+    {
+        if (!self::$lowerCaseIndex) {
+            self::load();
+        }
+
+        if (isset(self::$phoneticToGardiner[$phonetic])) {
+            return $phonetic;
+        }
+
+        $phonetic = strtolower($phonetic);
+
+        return self::$lowerCaseIndex[$phonetic] ?? null;
+    }
+
+    public static function translateToGardiner(string $phonetic): ?string
+    {
+        $phonetic = self::normalize($phonetic);
+
+        return self::$phoneticToGardiner[$phonetic] ?? null;
+    }
+
     /**
      * @return array<string, string>
      */

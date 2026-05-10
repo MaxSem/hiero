@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MaxSem\Hiero\Parse;
+namespace MaxSem\Hiero;
 
-final readonly class Error
+final class ErrorCodes
 {
     /**
      * Unexpected separator '$1'
@@ -36,14 +36,8 @@ final readonly class Error
      */
     public const INVALID_MODIFIERS = 'invalid-modifiers';
 
-    public function __construct(
-        /**
-         * @var mixed[][]|null Same format as debug_backtrace()
-         */
-        public ?array $backtrace,
-        public string $key,
-        /** @var mixed[] */
-        public array $params,
-    ) {
-    }
+    /**
+     * Font is missing glyph for character '$1'
+     */
+    public const FONT_MISSING_GLYPH = 'font-missing-glyph';
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MaxSem\Hiero\Test;
+namespace Tests\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Cartouche;
 use MaxSem\Hiero\Blocks\Parentheses;

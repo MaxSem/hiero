@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MaxSem\Hiero\Test;
+namespace Tests\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Document;
 use MaxSem\Hiero\Blocks\Hieroglyph;
@@ -10,9 +10,9 @@ use MaxSem\Hiero\Blocks\Juxtaposition;
 use MaxSem\Hiero\Blocks\Line;
 use MaxSem\Hiero\Blocks\Subdivision;
 use MaxSem\Hiero\Blocks\VerbatimText;
+use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroglyphModifiers;
-use MaxSem\Hiero\Parse\Error;
-use MaxSem\Hiero\Parse\Output;
+use MaxSem\Hiero\Parse\ParseContext;
 use MaxSem\Hiero\Parse\ParseOptions;
 use MaxSem\Hiero\Parse\Parser;
 use MaxSem\Hiero\Parse\Tokenizer;
@@ -35,9 +35,9 @@ class ParserTest extends TestCase
         }
 
         $parser = new Parser(new Tokenizer(), new ParseOptions());
-        $output = new Output(new ParseOptions(throwOnErrors: false));
+        $context = new ParseContext(new ParseOptions(throwOnErrors: false));
 
-        $block = $parser->parseHieroglyph($input, $output);
+        $block = $parser->parseHieroglyph($input, $context);
 
         if ($hieroglyph !== null) {
             self::assertInstanceOf(Hieroglyph::class, $block);
@@ -48,11 +48,13 @@ class ParserTest extends TestCase
             self::assertSame($text, $block->content);
         }
 
+        $errors = $context->errors->get();
+
         if ($expectedError === null) {
-            self::assertEmpty($output->getErrors());
+            self::assertEmpty($errors);
         } else {
-            self::assertCount(1, $output->getErrors());
-            $errorCode = $output->getErrors()[0]->key;
+            self::assertCount(1, $errors);
+            $errorCode = $errors[0]->key;
             self::assertSame($expectedError, $errorCode);
         }
     }
@@ -80,13 +82,13 @@ class ParserTest extends TestCase
             'phonetic' =>
             [
                 'input' => 'p',
-                'hieroglyph' => 'p',
+                'hieroglyph' => 'Q3',
                 'modifiers' => $defaultModifiers,
             ],
             'phonetic, uppercase' =>
             [
                 'input' => 'P',
-                'hieroglyph' => 'p',
+                'hieroglyph' => 'Q3',
                 'modifiers' => $defaultModifiers,
             ],
             'hieroglyph, mirrored' =>
@@ -98,13 +100,13 @@ class ParserTest extends TestCase
             'phonetic, rotated' =>
             [
                 'input' => 'p\\r1',
-                'hieroglyph' => 'p',
+                'hieroglyph' => 'Q3',
                 'modifiers' => $r1Modifiers,
             ],
             'phonetic, rotated and mirrored' =>
             [
                 'input' => 'p\\t3',
-                'hieroglyph' => 'p',
+                'hieroglyph' => 'Q3',
                 'modifiers' => $t3Modifiers,
             ],
 
@@ -115,7 +117,7 @@ class ParserTest extends TestCase
                 'hieroglyph' => null,
                 'modifiers' => null,
                 'text' => 'foo',
-                'expectedError' => Error::NOT_A_HIEROGLYPH,
+                'expectedError' => ErrorCodes::NOT_A_HIEROGLYPH,
             ],
             'random text, ignore what looks like modifiers' =>
             [
@@ -123,7 +125,7 @@ class ParserTest extends TestCase
                 'hieroglyph' => null,
                 'modifiers' => null,
                 'text' => 'foo\\r1',
-                'expectedError' => Error::NOT_A_HIEROGLYPH,
+                'expectedError' => ErrorCodes::NOT_A_HIEROGLYPH,
             ],
             'modifiers without anything else' =>
             [
@@ -131,7 +133,7 @@ class ParserTest extends TestCase
                 'hieroglyph' => null,
                 'modifiers' => null,
                 'text' => '\\r1',
-                'expectedError' => Error::NOT_A_HIEROGLYPH,
+                'expectedError' => ErrorCodes::NOT_A_HIEROGLYPH,
             ],
         ];
     }
@@ -143,10 +145,10 @@ class ParserTest extends TestCase
     {
         $parser = new Parser(new Tokenizer(), new ParseOptions());
         $output = $parser->parse($input);
-        $result = $output->getResult();
+        $result = $output->result;
 
         self::assertInstanceOf(Document::class, $result);
-        self::assertEmpty($output->getErrors());
+        self::assertEmpty($output->errors);
 
         $line = $result->innerBlocks[0];
         self::assertInstanceOf(Line::class, $line);

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Render;
 
-final class Size
+final readonly class Size
 {
     public function __construct(
-        public readonly float $width,
-        public readonly float $height,
+        public float $width,
+        public float $height,
     ) {
     }
 }

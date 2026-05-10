@@ -1,10 +1,10 @@
 .PHONY: all
 
-all: test phpcs phpstan
+all: test phpcs phpstan composer-validate
 
 .PHONY: test
 test:
-	vendor/bin/phpunit test
+	vendor/bin/phpunit tests
 
 phpcs:
 	 vendor/bin/phpcs -s --standard=phpcs.xml
@@ -14,3 +14,6 @@ phpcbf:
 
 phpstan:
 	vendor/bin/phpstan
+
+composer-validate:
+	composer validate

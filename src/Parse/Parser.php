@@ -6,11 +6,12 @@ namespace MaxSem\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Block;
 use MaxSem\Hiero\Blocks\BoundedBlock;
-use MaxSem\Hiero\Blocks\EmptyBlock;
 use MaxSem\Hiero\Blocks\Document;
+use MaxSem\Hiero\Blocks\EmptyBlock;
 use MaxSem\Hiero\Blocks\Hieroglyph;
 use MaxSem\Hiero\Blocks\Line;
 use MaxSem\Hiero\Blocks\VerbatimText;
+use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;
 use MaxSem\Hiero\Phonetics;
@@ -30,20 +31,18 @@ readonly class Parser
     }
 
     /**
-     * Ma
-     *
      * @throws ParseException
      */
-    public function parse(string $content): Output
+    public function parse(string $content): ParseOutput
     {
         $tokens = $this->tokenizer->tokenize($content);
 
         $input = new Input($tokens);
-        $output = new Output($this->options);
+        $context = new ParseContext($this->options);
 
         $lines = [];
         foreach ($input->lines() as $line) {
-            $blocks = $this->parseRecursive($line, $output);
+            $blocks = $this->parseRecursive($line, $context);
             if (!$blocks) {
                 $blocks = [new EmptyBlock()];
             }
@@ -55,19 +54,18 @@ readonly class Parser
             $lines[] = new Line([new EmptyBlock()]);
         }
 
-        $output->setResult(new Document($lines));
-
-        return $output;
+        return new ParseOutput(
+            new Document($lines),
+            $context->errors->get()
+        );
     }
 
     /**
-     * @param Input $input
-     * @param Output $output
      * @return Block[]
      *
      * @throws ParseException
      */
-    private function parseRecursive(Input $input, Output $output): array
+    private function parseRecursive(Input $input, ParseContext $context): array
     {
         $result = [];
         $blocks = [];
@@ -94,12 +92,12 @@ readonly class Parser
                 /** @var class-string<BoundedBlock> $class */
                 $innerInput = $input->findMatchingCloser($class);
                 if ($innerInput === null) {
-                    $output->addError(Error::UNMATCHED_OPENER, $cur);
+                    $context->errors->add(ErrorCodes::UNMATCHED_OPENER, $cur);
                     $input->next();
                 } else {
                     $closer = $input->current();
                     $input->next();
-                    $blocks[] = new $class($cur, $this->parseRecursive($innerInput, $output), $closer);
+                    $blocks[] = new $class($cur, $this->parseRecursive($innerInput, $context), $closer);
                     $lastWasBlock = true;
                 }
                 continue;
@@ -107,7 +105,7 @@ readonly class Parser
 
             $class = Token::BLOCK_CLOSERS[$cur] ?? null;
             if ($class) {
-                $output->addError(Error::UNMATCHED_CLOSER, $cur);
+                $context->errors->add(ErrorCodes::UNMATCHED_CLOSER, $cur);
                 $input->next();
                 continue;
             }
@@ -126,7 +124,7 @@ readonly class Parser
             }
 
             // assume it's a hieroglyph
-            $blocks[] = $this->parseHieroglyph($cur, $output);
+            $blocks[] = $this->parseHieroglyph($cur, $context);
             $lastWasBlock = true;
             $input->next();
         }
@@ -210,28 +208,29 @@ readonly class Parser
     /**
      * @throws ParseException
      */
-    public function parseHieroglyph(string $content, Output $output): Block
+    public function parseHieroglyph(string $content, ParseContext $context): Block
     {
         if (!preg_match('/^([a-z][a-z0-9]*)(.*?)$/i', $content, $matches)) {
-            $output->addError(Error::NOT_A_HIEROGLYPH, $content);
+            $context->errors->add(ErrorCodes::NOT_A_HIEROGLYPH, $content);
             return new VerbatimText($content);
         }
         $symbol = $matches[1];
         $modifiers = $matches[2];
 
         $normalized = ucfirst(strtolower($symbol));
-        if (isset(Unicode::gardinerToChar()[$normalized])) {
-            return new Hieroglyph($normalized, $this->parseModifiers($modifiers, $output), $symbol);
+        if (Unicode::gardinerToCodePoint($normalized)) {
+            return new Hieroglyph($normalized, null, $this->parseModifiers($modifiers, $context), $symbol);
         }
 
-        $lc = strtolower($symbol);
-        $phonetic = Phonetics::lowerCaseIndex()[$lc] ?? null;
+        $phonetic = Phonetics::normalize($symbol);
         if ($phonetic === null) {
-            $output->addError(Error::NOT_A_HIEROGLYPH, $symbol);
+            $context->errors->add(ErrorCodes::NOT_A_HIEROGLYPH, $symbol);
             return new VerbatimText($content);
         }
+        $gardinerCode = Phonetics::translateToGardiner($phonetic)
+            ?? throw new HieroException("Unexpected: couldn't translate '{$phonetic}'");
 
-        return new Hieroglyph($phonetic, $this->parseModifiers($modifiers, $output), $symbol);
+        return new Hieroglyph($gardinerCode, $phonetic, $this->parseModifiers($modifiers, $context), $symbol);
     }
 
     private const ROTATION_TABLE = [
@@ -243,7 +242,7 @@ readonly class Parser
         't3' => 270,
     ];
 
-    public function parseModifiers(string $markup, Output $output): HieroglyphModifiers
+    public function parseModifiers(string $markup, ParseContext $context): HieroglyphModifiers
     {
         $rotation = 0;
         $mirror = false;
@@ -261,7 +260,7 @@ readonly class Parser
         } elseif ($markup === '\\') {
             $mirror = true;
         } elseif ($markup !== '') {
-            $output->addError(Error::INVALID_MODIFIERS, $markup);
+            $context->errors->add(ErrorCodes::INVALID_MODIFIERS, $markup);
             $markup = '';
         }
 
