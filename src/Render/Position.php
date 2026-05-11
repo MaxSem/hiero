@@ -7,8 +7,8 @@ namespace MaxSem\Hiero\Render;
 final class Position
 {
     public function __construct(
-        public readonly float $x,
-        public readonly float $y,
+        public readonly int $x,
+        public readonly int $y,
     ) {
     }
 }

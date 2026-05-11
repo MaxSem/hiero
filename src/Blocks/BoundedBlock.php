@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+/**
+ * Base for all container blocks that have open and close markers, e.g. parentheses.
+ */
 abstract readonly class BoundedBlock extends Container
 {
     /**

@@ -8,6 +8,9 @@ use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
 
+/**
+ * Base class for all blocks that contain other blocks.
+ */
 abstract readonly class Container extends Block
 {
     public function __construct(
