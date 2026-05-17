@@ -43,6 +43,18 @@ class Token
         '*' => 2,
     ];
 
+    public const VOIDS = [
+        self::HALF_WIDTH_VOID => true,
+        self::FULL_WIDTH_VOID => true,
+    ];
+
     public const EOL = '!';
     public const SEPARATOR = '-';
+    public const HALF_WIDTH_VOID = '.';
+    public const FULL_WIDTH_VOID = '..';
+
+    public static function isVoid(string $token): bool
+    {
+        return isset(self::VOIDS[$token]);
+    }
 }

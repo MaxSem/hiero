@@ -21,7 +21,7 @@ final readonly class Tokenizer
             return [];
         }
 
-        $splitted = preg_split('/(\s*[*:!]\s*|[-\s]+)/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $splitted = preg_split('/(\s*[*:!.]+\s*|[-\s]+)/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
         if (!is_array($splitted)) {
             throw new HieroException('Regexp error');
         }
@@ -31,10 +31,27 @@ final readonly class Tokenizer
             if ($token === '') {
                 continue;
             }
-            if (preg_replace(self::DELIMITER_REGEX, '', $token) === '') {
+
+            $token = preg_replace(self::DELIMITER_REGEX, '', $token)
+                ?? throw new HieroException('Regex error');
+
+            if ($token === '') {
                 $token = Token::SEPARATOR;
             }
-            $result[] = trim($token);
+
+            if (Token::isVoid($token)) {
+                if (array_last($result) !== Token::SEPARATOR) {
+                    $result[] = Token::SEPARATOR;
+                }
+            }
+
+            if ($token !== Token::SEPARATOR || array_last($result) !== Token::SEPARATOR) {
+                $result[] = $token;
+            }
+
+            if (Token::isVoid($token)) {
+                $result[] = Token::SEPARATOR;
+            }
         }
 
         return $result;

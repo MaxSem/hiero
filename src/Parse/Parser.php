@@ -7,7 +7,7 @@ namespace MaxSem\Hiero\Parse;
 use MaxSem\Hiero\Blocks\Block;
 use MaxSem\Hiero\Blocks\BoundedBlock;
 use MaxSem\Hiero\Blocks\Document;
-use MaxSem\Hiero\Blocks\EmptyBlock;
+use MaxSem\Hiero\Blocks\VoidBlock;
 use MaxSem\Hiero\Blocks\Hieroglyph;
 use MaxSem\Hiero\Blocks\Line;
 use MaxSem\Hiero\Blocks\VerbatimText;
@@ -44,14 +44,14 @@ readonly class Parser
         foreach ($input->lines() as $line) {
             $blocks = $this->parseRecursive($line, $context);
             if (!$blocks) {
-                $blocks = [new EmptyBlock()];
+                $blocks = [new VoidBlock(VoidBlock::FULL_WIDTH)];
             }
 
             $lines[] = new Line($blocks);
         }
 
         if (!$lines) {
-            $lines[] = new Line([new EmptyBlock()]);
+            $lines[] = new Line([new VoidBlock(VoidBlock::FULL_WIDTH)]);
         }
 
         return new ParseOutput(
@@ -116,6 +116,13 @@ readonly class Parser
                     $lastWasBlock = false;
                 }
                 $input->next();
+                continue;
+            }
+
+            if ($cur === Token::HALF_WIDTH_VOID || $cur === Token::FULL_WIDTH_VOID) {
+                $blocks[] = new VoidBlock(strlen($cur));
+                $input->next();
+                $lastWasBlock = true;
                 continue;
             }
 

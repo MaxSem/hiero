@@ -40,7 +40,7 @@ abstract readonly class Container extends Block
         $viewBoxes = array_map(fn (RenderBox $b) => $b->viewBox, $rendered);
         $maxHeight = ViewBox::maxHeight($viewBoxes);
 
-        $line = $context->createGroupElement();
+        $line = $context->createSvgElement();
         $curX = $x;
         foreach ($rendered as $renderBox) {
             $box = $renderBox->viewBox->shift($curX, $y + $maxHeight - $renderBox->viewBox->height);

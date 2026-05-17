@@ -48,11 +48,11 @@ final class RenderContext
 
     public function createSvgElement(): DOMElement
     {
-        return $this->dom->createElementNS('http://www.w3.org/2000/svg', 'svg');
+        return $this->createElement('svg');
     }
 
-    public function createGroupElement(): DOMElement
+    public function createElement(string $name): DOMElement
     {
-        return $this->dom->createElementNS('http://www.w3.org/2000/svg', 'g');
+        return $this->dom->createElementNS('http://www.w3.org/2000/svg', $name);
     }
 }
