@@ -52,7 +52,6 @@ abstract readonly class Container extends Block
         }
 
         $resultingBox = new ViewBox($x, $y, $curX, $maxHeight);
-        $line->setAttribute('viewBox', $resultingBox->toString());
 
         return new RenderBox($line, $resultingBox);
     }

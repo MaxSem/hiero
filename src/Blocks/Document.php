@@ -46,7 +46,9 @@ final readonly class Document extends Container
         $y = 0;
         foreach ($rendered as $renderBox) {
             $box = $renderBox->viewBox->shift(0, $y);
-            $renderBox->output->setAttribute('viewBox', $box->toString());
+            $renderBox->output->setAttribute('x', (string)$box->minX);
+            $renderBox->output->setAttribute('y', (string)$box->minY);
+
             $doc->appendChild($renderBox->output);
             $y += $box->height;
         }
