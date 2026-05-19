@@ -22,11 +22,27 @@ final readonly class Document extends Container
 
     public function render(RenderContext $context): RenderBox
     {
+        $doc = $context->createSvgElement();
+        $doc->className = 'hiero-document';
+
+        if ($context->options->color !== null) {
+            $doc->setAttribute('color', $context->options->color);
+        }
+
+        if ($context->options->background !== null) {
+            $doc->setAttribute('style', "background: {$context->options->background}");
+        }
+
+        if ($context->options->style !== null) {
+            $style = $context->createElement('style');
+            $style->textContent = $context->options->style;
+            $doc->appendChild($style);
+        }
+
         $rendered = array_map(fn (Block $b) => $b->render($context), $this->innerBlocks);
         $viewBoxes = array_map(fn (RenderBox $b) => $b->viewBox, $rendered);
         $maxWidth = ViewBox::maxWidth($viewBoxes);
 
-        $doc = $context->createSvgElement();
         $y = 0;
         foreach ($rendered as $renderBox) {
             $box = $renderBox->viewBox->shift(0, $y);
@@ -37,7 +53,6 @@ final readonly class Document extends Container
 
         $resultingBox = new ViewBox(0, 0, $maxWidth, $y);
         $doc->setAttribute('viewBox', $resultingBox->toString());
-        $doc->className = 'hiero-document';
 
         return new RenderBox($doc, $resultingBox);
     }

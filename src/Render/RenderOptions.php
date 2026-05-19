@@ -13,6 +13,20 @@ final readonly class RenderOptions extends AbstractOptions
         public RenderMode $mode = RenderMode::SVG,
         bool $throwOnErrors = true,
         bool $logErrorBacktraces = false,
+        /**
+         * @var string|null Hieroglyph color, valid CSS or null to not set and default to black.
+         */
+        public ?string $color = null,
+        /**
+         * @var string|null Background CSS or null for transparent.
+         */
+        public ?string $background = null,
+        /**
+         * Content of rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
+         *
+         * @var string|null
+         */
+        public ?string $style = null,
     ) {
         parent::__construct(
             throwOnErrors: $throwOnErrors,
