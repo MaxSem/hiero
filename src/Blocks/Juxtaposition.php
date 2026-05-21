@@ -22,6 +22,10 @@ final readonly class Juxtaposition extends Container
 
     public function render(RenderContext $context): RenderBox
     {
-        throw new HieroException('Not implemented');
+        $result = $this->renderHorizontalBlock($context, $this->innerBlocks);
+
+        $result->output->setAttribute('class', 'hiero-juxtaposition');
+
+        return $result;
     }
 }
