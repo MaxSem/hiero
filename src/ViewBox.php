@@ -24,6 +24,16 @@ final readonly class ViewBox
         return new self($this->minX + $x, $this->minY + $y, $this->width, $this->height);
     }
 
+    public function scale(float $scale): self
+    {
+        return new self(
+            $this->minX,
+            $this->minY,
+            (int)round($this->width * $scale),
+            (int)round($this->height * $scale)
+        );
+    }
+
     /**
      * @param ViewBox[] $viewBoxes
      */

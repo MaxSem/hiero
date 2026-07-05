@@ -44,7 +44,6 @@ abstract readonly class Container extends Block
         $curX = $x;
         foreach ($rendered as $renderBox) {
             $box = $renderBox->viewBox->shift($curX, $y + $maxHeight - $renderBox->viewBox->height);
-            $renderBox->output->removeAttribute('viewBox');
             $renderBox->output->setAttribute('x', (string)$curX);
             $renderBox->output->setAttribute('y', (string)$y);
             $line->appendChild($renderBox->output);
