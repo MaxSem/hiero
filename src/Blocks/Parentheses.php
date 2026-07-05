@@ -12,6 +12,6 @@ final readonly class Parentheses extends BoundedBlock
 {
     public function render(RenderContext $context): RenderBox
     {
-        throw new HieroException('Not implemented');
+        return $this->renderHorizontalBlock($context, $this->innerBlocks);
     }
 }

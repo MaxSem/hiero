@@ -8,6 +8,7 @@ use MaxSem\Hiero\Blocks\Block;
 use MaxSem\Hiero\Blocks\Hieroglyph;
 use MaxSem\Hiero\Blocks\Juxtaposition;
 use MaxSem\Hiero\Blocks\Line;
+use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Blocks\Subdivision;
 use MaxSem\Hiero\Blocks\VerbatimText;
 use MaxSem\Hiero\Blocks\VoidBlock;
@@ -325,6 +326,40 @@ class ParserTest extends TestCase
                     self::assertSame('B1', $blocks[0]->innerBlocks[1]->code);
                     self::assertSame('C1', $blocks[0]->innerBlocks[2]->code);
                 },
+            ],
+
+            'parentheses' => [
+                'A1:(B1-C1-(D1))',
+                function (array $blocks): void {
+                    self::assertCount(1, $blocks);
+                    self::assertInstanceOf(Subdivision::class, $blocks[0]);
+                    self::assertCount(2, $blocks[0]->innerBlocks);
+                    self::assertSame('A1', $blocks[0]->innerBlocks[0]->code);
+                    self::assertInstanceOf(Parentheses::class, $blocks[0]->innerBlocks[1]);
+                    self::assertCount(3, $blocks[0]->innerBlocks[1]->innerBlocks);
+                    self::assertSame('B1', $blocks[0]->innerBlocks[1]->innerBlocks[0]->code);
+                    self::assertSame('C1', $blocks[0]->innerBlocks[1]->innerBlocks[1]->code);
+                    self::assertInstanceOf(Parentheses::class, $blocks[0]->innerBlocks[1]->innerBlocks[2]);
+                    self::assertCount(1, $blocks[0]->innerBlocks[1]->innerBlocks[2]->innerBlocks);
+                    self::assertSame('D1', $blocks[0]->innerBlocks[1]->innerBlocks[2]->innerBlocks[0]->code);
+                }
+            ],
+            'parentheses, spaced' => [
+                'A1 : ( B1-C1-( D1 ) )',
+                function (array $blocks): void {
+                    // same checks as the previous case
+                    self::assertCount(1, $blocks);
+                    self::assertInstanceOf(Subdivision::class, $blocks[0]);
+                    self::assertCount(2, $blocks[0]->innerBlocks);
+                    self::assertSame('A1', $blocks[0]->innerBlocks[0]->code);
+                    self::assertInstanceOf(Parentheses::class, $blocks[0]->innerBlocks[1]);
+                    self::assertCount(3, $blocks[0]->innerBlocks[1]->innerBlocks);
+                    self::assertSame('B1', $blocks[0]->innerBlocks[1]->innerBlocks[0]->code);
+                    self::assertSame('C1', $blocks[0]->innerBlocks[1]->innerBlocks[1]->code);
+                    self::assertInstanceOf(Parentheses::class, $blocks[0]->innerBlocks[1]->innerBlocks[2]);
+                    self::assertCount(1, $blocks[0]->innerBlocks[1]->innerBlocks[2]->innerBlocks);
+                    self::assertSame('D1', $blocks[0]->innerBlocks[1]->innerBlocks[2]->innerBlocks[0]->code);
+                }
             ],
         ];
     }

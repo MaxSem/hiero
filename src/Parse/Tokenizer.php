@@ -21,7 +21,7 @@ final readonly class Tokenizer
             return [];
         }
 
-        $splitted = preg_split('/(\s*[*:!.]+\s*|[-\s]+)/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
+        $splitted = preg_split('/(\s*[*:!.]+\s*|[-\s]+|\(|\))/', $input, -1, PREG_SPLIT_DELIM_CAPTURE);
         if (!is_array($splitted)) {
             throw new HieroException('Regexp error');
         }
