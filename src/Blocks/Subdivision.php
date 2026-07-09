@@ -27,7 +27,7 @@ final readonly class Subdivision extends Container
         $maxWidth = ViewBox::maxWidth($viewBoxes);
 
         $svg = $context->createSvgElement();
-        $svg->setAttribute('class', 'hiero-subdivision');
+        $svg->setAttribute('class', 'subdivision');
 
         $height = 0;
         foreach ($rendered as $block) {

@@ -33,7 +33,7 @@ final readonly class VoidBlock extends Block
         );
 
         $void = $context->createSvgElement();
-        $void->setAttribute('class', 'hiero-void');
+        $void->setAttribute('class', 'void');
         $void->setAttribute('data-gardiner', $this->markup());
         $void->setAttribute('width', (string)$box->width);
         $void->setAttribute('height', (string)$box->height);

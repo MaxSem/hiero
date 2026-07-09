@@ -17,7 +17,7 @@ final readonly class Line extends Container
     public function render(RenderContext $context): RenderBox
     {
         $result = $this->renderHorizontalBlock($context, $this->innerBlocks);
-        $result->output->setAttribute('class', 'hiero-line');
+        $result->output->setAttribute('class', 'line');
 
         return $result;
     }

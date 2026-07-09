@@ -69,7 +69,7 @@ final readonly class Cartouche extends BoundedBlock
 
         // Create path element
         $svg = $context->createSvgElement();
-        $svg->setAttribute('class', 'hiero-cartouche');
+        $svg->setAttribute('class', 'cartouche');
         $pathElement = $context->createElement('path');
         $pathElement->setAttribute('stroke', 'currentColor');
         $pathElement->setAttribute('stroke-width', (string)$lineWidth);

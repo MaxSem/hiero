@@ -42,7 +42,7 @@ final readonly class Hieroglyph extends Block
             $box = $context->font->defaultSize;
         }
 
-        $svg->setAttribute('class', 'hiero-glyph');
+        $svg->setAttribute('class', 'glyph');
 
         // @todo: modifiers
 

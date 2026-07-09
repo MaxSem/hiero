@@ -24,7 +24,7 @@ final readonly class Juxtaposition extends Container
     {
         $result = $this->renderHorizontalBlock($context, $this->innerBlocks);
 
-        $result->output->setAttribute('class', 'hiero-juxtaposition');
+        $result->output->setAttribute('class', 'juxtaposition');
 
         return $result;
     }
