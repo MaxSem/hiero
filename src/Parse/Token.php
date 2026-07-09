@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MaxSem\Hiero\Parse;
 
 use MaxSem\Hiero\Blocks\Cartouche;
+use MaxSem\Hiero\Blocks\HwtCartouche;
 use MaxSem\Hiero\Blocks\Juxtaposition;
 use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Blocks\Subdivision;
@@ -15,9 +16,10 @@ class Token
         '<' => Cartouche::class,
         '<1' => Cartouche::class,
         '<2' => Cartouche::class,
-        '<h1' => Cartouche::class,
-        '<h2' => Cartouche::class,
-        '<h3' => Cartouche::class,
+
+        '<h1' => HwtCartouche::class,
+        '<h2' => HwtCartouche::class,
+        '<h3' => HwtCartouche::class,
 
         '(' => Parentheses::class,
     ];
@@ -26,9 +28,10 @@ class Token
         '>' => Cartouche::class,
         '1>' => Cartouche::class,
         '2>' => Cartouche::class,
-        'h1>' => Cartouche::class,
-        'h2>' => Cartouche::class,
-        'h3>' => Cartouche::class,
+
+        'h1>' => HwtCartouche::class,
+        'h2>' => HwtCartouche::class,
+        'h3>' => HwtCartouche::class,
 
         ')' => Parentheses::class,
     ];
