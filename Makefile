@@ -16,4 +16,4 @@ phpstan:
 	vendor/bin/phpstan
 
 composer-validate:
-	composer validate
+	composer validate --strict
