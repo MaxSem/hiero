@@ -7,12 +7,6 @@ namespace MaxSem\Hiero;
 final class ErrorCodes
 {
     /**
-     * Unexpected separator '$1'
-     * Examples: -A1, B1--C1
-     */
-    public const UNEXPECTED_SEPARATOR = 'unexpected-separator';
-
-    /**
      * Opening element '$1' without a matching closing one
      * Example: <-a-b (unclosed cartouche)
      */
