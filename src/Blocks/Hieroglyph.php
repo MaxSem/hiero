@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use DOMElement;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroglyphModifiers;
 use MaxSem\Hiero\Render\RenderBox;
@@ -29,22 +30,69 @@ final readonly class Hieroglyph extends Block
     {
         $box = $context->font->getViewBox($this->code);
 
-        if ($box) {
-            $svg = $context->getGlyph($this->code);
-            $svg->removeAttribute('viewBox');
-            $desc = $this->code . ($this->phonetic === null ? '' : " [{$this->phonetic}]");
-            $unicode = mb_chr((int)Unicode::gardinerToCodePoint($this->code));
-            $svg->setAttribute('data-gardiner', $desc);
-            $svg->setAttribute('data-text', $unicode);
-        } else {
-            $context->errors->add(ErrorCodes::FONT_MISSING_GLYPH, $this->code);
-            $svg = $context->createSvgElement();
-            $box = $context->font->defaultSize;
+        if (!$box) {
+            return $this->missingGlyph($context);
         }
 
+        $svg = $context->getGlyph($this->code);
+        $svg->removeAttribute('viewBox');
+        $desc = $this->code . ($this->phonetic === null ? '' : " [{$this->phonetic}]");
+        $unicode = mb_chr((int)Unicode::gardinerToCodePoint($this->code));
+        $svg->setAttribute('data-gardiner', $desc);
+        $svg->setAttribute('data-text', $unicode);
         $svg->setAttribute('class', 'glyph');
 
-        // @todo: modifiers
+        $transformations = [];
+        $rotation = $this->modifiers->rotation;
+        $origWidth = $box->width;
+        $origHeight = $box->height;
+
+        switch ($rotation) {
+            case 0:
+                break;
+            case 90:
+                $transformations[] = "translate($origHeight, 0) rotate(90)";
+                $box = $box->rotate90deg();
+                break;
+            case 180:
+                $transformations[] = "translate($origWidth, $origHeight) rotate(180)";
+                break;
+            case 270:
+                $transformations[] = "translate(0, $origWidth) rotate(270)";
+                $box = $box->rotate90deg();
+                break;
+            default:
+                $transformations[] = "rotate($rotation)";
+        }
+
+        if ($this->modifiers->mirror) {
+            $transformations[] = "translate($origWidth, 0) scale(-1, 1)";
+        }
+
+        if ($transformations) {
+            $group = $context->createElement('g');
+            $group->setAttribute('transform', implode(' ', $transformations));
+            $this->groupPaths($svg, $group);
+        }
+
+        return new RenderBox($svg, $box);
+    }
+
+    private function groupPaths(DOMElement $svg, DOMElement $group): void
+    {
+        foreach ($svg->getElementsByTagName('path') as $path) {
+            $svg->removeChild($path);
+            $group->appendChild($path);
+        }
+
+        $svg->appendChild($group);
+    }
+
+    private function missingGlyph(RenderContext $context): RenderBox
+    {
+        $context->errors->add(ErrorCodes::FONT_MISSING_GLYPH, $this->code);
+        $svg = $context->createSvgElement();
+        $box = $context->font->defaultSize;
 
         return new RenderBox($svg, $box);
     }

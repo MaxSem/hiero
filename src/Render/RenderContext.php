@@ -34,10 +34,12 @@ final class RenderContext
     {
         if (!isset($this->glyphCache[$gardinerCode])) {
             $doc = new DOMDocument();
-            $doc->loadXML($this->font->getSvg($gardinerCode));
+            if (!$doc->loadXML($this->font->getSvg($gardinerCode))) {
+                throw new HieroException("Error parsing XML for glyph $gardinerCode");
+            }
 
             $this->glyphCache[$gardinerCode] = $doc->documentElement
-                ?? throw new HieroException("documentElement is empty for $gardinerCode");
+                ?? throw new HieroException("documentElement is empty for glyph $gardinerCode");
         }
 
         /** @var DOMElement $glyph */
