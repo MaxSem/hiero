@@ -6,7 +6,6 @@ namespace MaxSem\Hiero\Render;
 
 use DOMDocument;
 use DOMElement;
-use DOMException;
 use MaxSem\Hiero\ErrorHandler;
 use MaxSem\Hiero\Font;
 use MaxSem\Hiero\HieroException;
@@ -18,9 +17,9 @@ final class RenderContext
     public readonly DOMDocument $dom;
 
     /**
-     * @var array<string, DOMElement>
+     * @var array<string, string>
      */
-    private array $glyphCache = [];
+    private array $glyphsEncountered = [];
 
     public function __construct(
         public readonly RenderOptions $options,
@@ -32,20 +31,38 @@ final class RenderContext
 
     public function getGlyph(string $gardinerCode): DOMElement
     {
-        if (!isset($this->glyphCache[$gardinerCode])) {
-            $doc = new DOMDocument();
-            if (!$doc->loadXML($this->font->getSvg($gardinerCode))) {
-                throw new HieroException("Error parsing XML for glyph $gardinerCode");
-            }
+        $viewBox = $this->glyphsEncountered[$gardinerCode] ?? null;
 
-            $this->glyphCache[$gardinerCode] = $doc->documentElement
-                ?? throw new HieroException("documentElement is empty for glyph $gardinerCode");
+        if ($viewBox === null) {
+            $svg = $this->loadGlyph($gardinerCode);
+            $viewBox = $svg->getAttribute('viewBox');
+            if (!$viewBox) {
+                throw new HieroException("SVG for $gardinerCode has no viewBox attribute");
+            }
+            $this->glyphsEncountered[$gardinerCode] = $viewBox;
+        } else {
+            $glyph = $this->createElement('use');
+            $glyph->setAttribute('href', "#$gardinerCode");
+            $group = $this->createElement('g');
+            $group->appendChild($glyph);
+            $svg = $this->createSvgElement();
+            $svg->appendChild($group);
+            $svg->setAttribute('viewBox', $viewBox);
         }
 
-        /** @var DOMElement $glyph */
-        $glyph = $this->dom->importNode($this->glyphCache[$gardinerCode], true);
+        return $svg;
+    }
 
-        return $glyph;
+    private function loadGlyph(string $gardinerCode): DOMElement
+    {
+        $doc = new DOMDocument();
+        if (!$doc->loadXML($this->font->getSvg($gardinerCode))) {
+            throw new HieroException("Error parsing XML for glyph $gardinerCode");
+        }
+
+        $root = $doc->documentElement ?? throw new HieroException("documentElement is empty for glyph $gardinerCode");
+
+        return $this->dom->importNode($root, true); // @phpstan-ignore return.type
     }
 
     public function createSvgElement(): DOMElement

@@ -6,6 +6,7 @@ namespace MaxSem\Hiero\Blocks;
 
 use DOMElement;
 use MaxSem\Hiero\ErrorCodes;
+use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
@@ -70,22 +71,14 @@ final readonly class Hieroglyph extends Block
         }
 
         if ($transformations) {
-            $group = $context->createElement('g');
+            $group = $svg->firstElementChild;
+            if (!$group || $group->nodeName !== 'g') {
+                throw new HieroException("Unexpected SVG structure for glyph {$this->code}");
+            }
             $group->setAttribute('transform', implode(' ', $transformations));
-            $this->groupPaths($svg, $group);
         }
 
         return new RenderBox($svg, $box);
-    }
-
-    private function groupPaths(DOMElement $svg, DOMElement $group): void
-    {
-        foreach ($svg->getElementsByTagName('path') as $path) {
-            $svg->removeChild($path);
-            $group->appendChild($path);
-        }
-
-        $svg->appendChild($group);
     }
 
     private function missingGlyph(RenderContext $context): RenderBox

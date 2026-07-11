@@ -105,7 +105,7 @@ function processSvgFiles(string $source, string $dest, array $charToGardiner): a
             continue;
         }
 
-        $viewBox = processSvg($filename, "$dest/$gardinerCode.svg");
+        $viewBox = processSvg($filename, "$dest/$gardinerCode.svg", $gardinerCode);
         $result[$gardinerCode] = $viewBox;
         $max[0] = min($max[0], $viewBox[0]);
         $max[1] = min($max[1], $viewBox[1]);
@@ -120,7 +120,7 @@ function processSvgFiles(string $source, string $dest, array $charToGardiner): a
     return [$result, $max];
 }
 
-function processSvg(string $source, string $dest): array
+function processSvg(string $source, string $dest, string $gardinerCode): array
 {
     $doc = new DOMDocument();
     $doc->load($source);
@@ -130,7 +130,7 @@ function processSvg(string $source, string $dest): array
         bail("No <svg> element found in $source");
     }
     if ($nodes->count() > 1) {
-        bail("More than one svg element found in $source");
+        bail("More than one <svg> element found in $source, can't comprehend it");
     }
 
     $svg = $nodes[0];
@@ -139,9 +139,21 @@ function processSvg(string $source, string $dest): array
         bail("No valid viewBox found in $source");
     }
 
-    $result = array_map('intval', explode(' ', $viewBox));
+    // Put <path> into a <g> so that we could apply SVG transformations to the glyph without altering the attributes
+    // of the <path>. Otherwise, we can't share it via <use>.
+    $group = $doc->createElementNS('http://www.w3.org/2000/svg', 'g');
+    foreach ($svg->getElementsByTagName('path') as $path) {
+        $path->setAttribute('id', $gardinerCode);
+        $svg->removeChild($path);
+        $group->appendChild($path);
+    }
+    if ($group->childNodes->length > 1) {
+        bail("More than one <path> element found in $source, not supported");
+    }
 
-    $svg->removeAttribute('xmlns');
+    $svg->appendChild($group);
+
+    // Extraneous attributes
     $svg->removeAttribute('xmlns:xlink');
     $svg->removeAttribute('version');
 
@@ -153,7 +165,7 @@ function processSvg(string $source, string $dest): array
 
     file_put_contents($dest, $contents) ?: bail("Error saving $source");
 
-    return $result;
+    return array_map(intval(...), explode(' ', $viewBox));
 }
 
 function saveData(string $filename, array $data): void
