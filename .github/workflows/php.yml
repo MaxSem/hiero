@@ -17,6 +17,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - uses: awalsh128/cache-apt-pkgs-action@v1
+      with:
+        packages: php8.3-imagick librsvg2-bin imagemagick-6-common  libmagickcore-6.q16-7t64 libmagickcore-6.q16-7-extra libmagickwand-6.q16-7t64
+        version: 1.0
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
