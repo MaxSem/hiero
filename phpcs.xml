@@ -3,6 +3,8 @@
     <file>src</file>
     <file>tests</file>
 
+    <exclude-pattern>tests/Render/data/*</exclude-pattern>
+
     <rule ref="PSR12"/>
 
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>

@@ -4,7 +4,7 @@ all: test phpcs phpstan composer-validate
 
 .PHONY: test
 test:
-	vendor/bin/phpunit tests
+	export DUMP_TEST_IMAGES=1 && vendor/bin/phpunit tests
 
 phpcs:
 	 vendor/bin/phpcs -s --standard=phpcs.xml
@@ -17,3 +17,6 @@ phpstan:
 
 composer-validate:
 	composer validate --strict
+
+regenerate-test-data:
+	bin/build-font.php tests/Render/data/font-src tests/Render/data/font
