@@ -172,44 +172,28 @@ readonly class Parser
             return $blocks[0];
         }
 
-        $minPrec = PHP_INT_MAX;
-        foreach ($operators as $op) {
-            $prec = Token::OPERATOR_PRECEDENCE[$op];
-            if ($prec < $minPrec) {
-                $minPrec = $prec;
-            }
-        }
+        $precedences = array_map(fn (string $op) => Token::OPERATOR_PRECEDENCE[$op], $operators);
+        $minPrec = min($precedences);
 
-        $opClass = null;
-        foreach ($operators as $op) {
-            if (Token::OPERATOR_PRECEDENCE[$op] === $minPrec) {
-                $opClass = Token::OPERATORS[$op];
-                break;
-            }
-        }
+        $chunkBlocks = [$blocks[0]];
+        $chunkOps = [];
+        $children = [];
+        $outerClass = null;
 
-        $currentBlocks = [$blocks[0]];
-        $currentOps = [];
-        $groups = [];
-
-        for ($i = 0, $len = count($operators); $i < $len; $i++) {
-            if (Token::OPERATOR_PRECEDENCE[$operators[$i]] === $minPrec) {
-                $groups[] = [$currentBlocks, $currentOps];
-                $currentBlocks = [$blocks[$i + 1]];
-                $currentOps = [];
+        foreach ($operators as $i => $op) {
+            if ($precedences[$i] === $minPrec) {
+                $children[] = $this->buildOperatorTree($chunkBlocks, $chunkOps);
+                $outerClass ??= Token::OPERATORS[$op];
+                $chunkBlocks = [$blocks[$i + 1]];
+                $chunkOps = [];
             } else {
-                $currentOps[] = $operators[$i];
-                $currentBlocks[] = $blocks[$i + 1];
+                $chunkOps[] = $op;
+                $chunkBlocks[] = $blocks[$i + 1];
             }
         }
-        $groups[] = [$currentBlocks, $currentOps];
+        $children[] = $this->buildOperatorTree($chunkBlocks, $chunkOps);
 
-        $innerBlocks = array_map(
-            fn (array $group) => $this->buildOperatorTree($group[0], $group[1]),
-            $groups
-        );
-
-        return new $opClass($innerBlocks);
+        return new $outerClass($children);
     }
 
     /**
