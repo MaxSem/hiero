@@ -10,7 +10,7 @@ use MaxSem\Hiero\Blocks\Document;
 use MaxSem\Hiero\Blocks\VoidBlock;
 use MaxSem\Hiero\Blocks\Hieroglyph;
 use MaxSem\Hiero\Blocks\Line;
-use MaxSem\Hiero\Blocks\VerbatimText;
+use MaxSem\Hiero\Blocks\UnrecognizedMarkup;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;
@@ -217,9 +217,9 @@ readonly class Parser
      */
     public function parseHieroglyph(string $content, ParseContext $context): Block
     {
-        if (!preg_match('/^([a-z][a-z0-9]*)(.*?)$/i', $content, $matches)) {
+        if (!preg_match('/^([a-z][a-z0-9]*)(.*)$/i', $content, $matches)) {
             $context->errors->add(ErrorCodes::NOT_A_HIEROGLYPH, $content);
-            return new VerbatimText($content);
+            return new UnrecognizedMarkup($content);
         }
         $symbol = $matches[1];
         $modifiers = $matches[2];
@@ -232,7 +232,7 @@ readonly class Parser
         $phonetic = Phonetics::normalize($symbol);
         if ($phonetic === null) {
             $context->errors->add(ErrorCodes::NOT_A_HIEROGLYPH, $symbol);
-            return new VerbatimText($content);
+            return new UnrecognizedMarkup($content);
         }
         $gardinerCode = Phonetics::translateToGardiner($phonetic)
             ?? throw new HieroException("Unexpected: couldn't translate '{$phonetic}'");

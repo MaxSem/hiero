@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
-use DOMElement;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;

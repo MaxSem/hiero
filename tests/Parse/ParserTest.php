@@ -10,7 +10,7 @@ use MaxSem\Hiero\Blocks\Juxtaposition;
 use MaxSem\Hiero\Blocks\Line;
 use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Blocks\Subdivision;
-use MaxSem\Hiero\Blocks\VerbatimText;
+use MaxSem\Hiero\Blocks\UnrecognizedMarkup;
 use MaxSem\Hiero\Blocks\VoidBlock;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroglyphModifiers;
@@ -68,7 +68,7 @@ class ParserTest extends TestCase
             self::assertSame($hieroglyph, $block->code);
             self::assertEquals($modifiers, $block->modifiers);
         } else {
-            self::assertInstanceOf(VerbatimText::class, $block);
+            self::assertInstanceOf(UnrecognizedMarkup::class, $block);
             self::assertSame($text, $block->content);
         }
 

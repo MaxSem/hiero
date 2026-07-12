@@ -13,7 +13,7 @@ final readonly class RenderOutput
         public string $svg,
         public ViewBox $viewBox,
         /**
-         * @var Error[]
+         * @var array<Error>
          */
         public array $errors,
     ) {

@@ -23,7 +23,7 @@ final readonly class Document extends Container
     public function render(RenderContext $context): RenderBox
     {
         $doc = $context->createSvgElement();
-        $doc->className = 'document';
+        $doc->setAttribute('class', 'document');
 
         if ($context->options->color !== null) {
             $doc->setAttribute('color', $context->options->color);

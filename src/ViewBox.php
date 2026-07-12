@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero;
 
+/**
+ * Represents a viewBox of an SVG element
+ * https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Attribute/viewBox
+ */
 final readonly class ViewBox
 {
     public function __construct(
@@ -16,7 +20,7 @@ final readonly class ViewBox
 
     public function rotate90deg(): self
     {
-        return new self($this->minY, $this->minX, $this->height, $this->width);
+        return new self($this->minX, $this->minY, $this->height, $this->width);
     }
 
     public function shift(int $x, int $y): self

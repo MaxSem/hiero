@@ -28,7 +28,7 @@ final readonly class VoidBlock extends Block
         $box = new ViewBox(
             0,
             0,
-            ($context->font->defaultSize->width * $this->width) / 2,
+            intval(($context->font->defaultSize->width * $this->width) / 2),
             $context->font->defaultSize->height,
         );
 

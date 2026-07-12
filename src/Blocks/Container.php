@@ -34,23 +34,22 @@ abstract readonly class Container extends Block
     /**
      * @param Block[] $blocks
      */
-    protected function renderHorizontalBlock(RenderContext $context, array $blocks, int $x = 0, int $y = 0): RenderBox
+    protected function renderHorizontalBlock(RenderContext $context, array $blocks): RenderBox
     {
         $rendered = array_map(fn (Block $b) => $b->render($context), $blocks);
         $viewBoxes = array_map(fn (RenderBox $b) => $b->viewBox, $rendered);
         $maxHeight = ViewBox::maxHeight($viewBoxes);
 
         $line = $context->createSvgElement();
-        $curX = $x;
+        $curX = 0;
         foreach ($rendered as $renderBox) {
-            $box = $renderBox->viewBox->shift($curX, $y + $maxHeight - $renderBox->viewBox->height);
+            $box = $renderBox->viewBox->shift($curX, $maxHeight - $renderBox->viewBox->height);
             $renderBox->output->setAttribute('x', (string)$curX);
-            $renderBox->output->setAttribute('y', (string)$y);
             $line->appendChild($renderBox->output);
             $curX += $box->width;
         }
 
-        $resultingBox = new ViewBox($x, $y, $curX, $maxHeight);
+        $resultingBox = new ViewBox(0, 0, $curX, $maxHeight);
 
         return new RenderBox($line, $resultingBox);
     }

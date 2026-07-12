@@ -37,11 +37,6 @@ class Input
         return $this->tokens[++$this->pos] ?? null;
     }
 
-    public function peek(): ?string
-    {
-        return $this->tokens[$this->pos + 1] ?? null;
-    }
-
     public function findMatchingCloser(string $closerClass): ?Input
     {
         $stack = [];

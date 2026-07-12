@@ -30,4 +30,10 @@
         </properties>
     </rule>
     <rule ref="SlevomatCodingStandard.Commenting.UselessFunctionDocComment"/>
+
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
 </ruleset>
