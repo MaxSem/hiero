@@ -43,10 +43,11 @@ abstract readonly class Container extends Block
         $line = $context->createSvgElement();
         $curX = 0;
         foreach ($rendered as $renderBox) {
-            $box = $renderBox->viewBox->shift($curX, $maxHeight - $renderBox->viewBox->height);
+            $y = $maxHeight - $renderBox->viewBox->height;
             $renderBox->output->setAttribute('x', (string)$curX);
+            $renderBox->output->setAttribute('y', (string)$y);
             $line->appendChild($renderBox->output);
-            $curX += $box->width;
+            $curX += $renderBox->viewBox->width;
         }
 
         $resultingBox = new ViewBox(0, 0, $curX, $maxHeight);
