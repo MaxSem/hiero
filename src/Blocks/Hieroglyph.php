@@ -62,7 +62,7 @@ final readonly class Hieroglyph extends Block
                 $box = $box->rotate90deg();
                 break;
             default:
-                $transformations[] = "rotate($rotation)";
+                throw new HieroException("Unsupported hieroglyph rotation: $rotation");
         }
 
         if ($this->modifiers->mirror) {
