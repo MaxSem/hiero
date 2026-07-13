@@ -3,6 +3,8 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
 const FIRST_CHAR = 0x13000;
 const LAST_CHAR = 0x1342F;
 
@@ -44,6 +46,7 @@ $metadata = json_decode(file_get_contents("$rawDataDir/_font.json"), true, flags
     or bail("Coundn't read font metadata.");
 
 $result = [
+    'version' => \MaxSem\Hiero\Font::FONT_VERSION,
     'metadata' => $metadata,
     'boundingBox' => $boundingBox,
     'characters' => $characters,

@@ -6,6 +6,11 @@ namespace MaxSem\Hiero;
 
 class Font
 {
+    /**
+     * Only fonts generated with this version are supported
+     */
+    public const FONT_VERSION = 1;
+
     /** @var array<string, mixed> */
     private array $metadata;
 
@@ -27,10 +32,15 @@ class Font
         }
 
         [
+            'version' => $version,
             'metadata' => $this->metadata,
             'boundingBox' => $boundingBox,
             'characters' => $this->characters
         ] = require($filename);
+
+        if ($version != self::FONT_VERSION) {
+            throw new HieroException("Font version $version is not supported.");
+        }
 
         $this->boundingBox = new ViewBox(...$boundingBox);
         $this->defaultSize = new ViewBox(...reset($this->characters));
