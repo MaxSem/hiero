@@ -21,16 +21,23 @@ final readonly class UnrecognizedMarkup extends Block
 
     public function render(RenderContext $context): RenderBox
     {
-        $svg = $context->createSvgElement();
         $box = $context->font->defaultSize;
 
-        $svg->setAttribute('viewBox', $box->toString());
+        $fontSize = 100;
+        $charWidth = 60;
+        $textWidth = $charWidth * max(1, mb_strlen($this->content));
+
+        $svg = $context->createSvgElement();
+        $svg->setAttribute('viewBox', "0 0 $textWidth $fontSize");
+        $svg->setAttribute('preserveAspectRatio', 'xMidYMid');
+        $svg->setAttribute('width', (string)$box->width);
+        $svg->setAttribute('height', (string)$box->height);
 
         $text = $context->createElement('text');
-        $text->setAttribute('x', '20%');
-        $text->setAttribute('y', '50%');
-        $text->setAttribute('font-size', '30');
-        $text->setAttribute('lengthAdjust', 'spacingAndGlyphs');
+        $text->setAttribute('x', '0');
+        $text->setAttribute('y', (string)(int)($fontSize * 0.85));
+        $text->setAttribute('font-size', (string)$fontSize);
+        $text->setAttribute('font-family', 'sans-serif');
         $text->textContent = $this->content;
 
         $svg->appendChild($text);
