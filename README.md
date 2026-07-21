@@ -1,5 +1,5 @@
 # Hiero is an Egyptian Hieroglyphics to SVG renderer in pure PHP
-
+![Example output](doc/example.svg)
 # Installation
     composer install maxsem/hiero
 
@@ -15,17 +15,21 @@ You'll need Python and FontForge module for it to export SVGs from fonts.
 
 ```php
 $tokenizer = new Tokenizer();
+
+// All these parameters are optional 
 $parseOptions = new ParseOptions(
     throwOnErrors: true,       // See #Error handling
     logErrorBacktraces: false, // See #Error handling
 );
 $parser = new Parser($tokenizer, $parseOptions);
 
+// All these parameters are optional
 $renderOptions = new RenderOptions(
     throwOnErrors: true,       // See #Error handling
     logErrorBacktraces: false, // See #Error handling
     color: 'black',            // Hieroglyph color: valid CSS color or null to not set and default to black.
     background: 'white',       // Background: CSS color or null for transparent.
+
     // Content of rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
     style: ".cartouche { color: red }\n" // color the cartouche red
         . '.glyph { color: black }',     // But keep the hieroglyphs inside black
@@ -33,9 +37,13 @@ $renderOptions = new RenderOptions(
 $font = Font::fromPath('path/to/font');
 // Or
 $font = Font::fromComposerPackage('package/name');
+
 $renderer = new Renderer($renderOptions, $font);
 
 $parseOuptut = $parser->parse('< A1\-B1 >');
+$renderOuptut = $renderer->render($parseOuptut->result);
+
+file_put_contents('result.svg', $renderOuptut->svg);
 ```
 
 
@@ -50,6 +58,6 @@ See the `ErrorCodes` class for possible codes.
 # Development
 
 * If it isn't tested, it doesn't work.
-* Prefer immutable data classes with readonly properties to getters an setters.  
+* Prefer immutable data classes with readonly properties to getters and setters.
 * Run all the tests with `make`.
 * Minimum supported PHP version is [the one used by Wikimedia wikis](https://en.wikipedia.org/wiki/Special:Version).
