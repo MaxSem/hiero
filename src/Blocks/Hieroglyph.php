@@ -10,6 +10,7 @@ use MaxSem\Hiero\HieroglyphModifiers;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\Unicode;
+use MaxSem\Hiero\ViewBox;
 
 final readonly class Hieroglyph extends Block
 {
@@ -46,6 +47,8 @@ final readonly class Hieroglyph extends Block
         $rotation = $this->modifiers->rotation;
         $origWidth = $box->width;
         $origHeight = $box->height;
+        $origMinX = $box->minX;
+        $origMinY = $box->minY;
 
         switch ($rotation) {
             case 0:
@@ -69,6 +72,14 @@ final readonly class Hieroglyph extends Block
             $transformations[] = "translate($origWidth, 0) scale(-1, 1)";
         }
 
+        // The rotation and mirror transforms above, as well as the layout code, assume the glyph
+        // occupies [0, width] x [0, height]. Fonts may place glyphs at a nonzero viewBox origin
+        // (e.g. the EOT font uses a negative minX), so normalize the content to the origin here.
+        // This is applied innermost (last in the list), i.e. before any rotation/mirror.
+        if ($origMinX !== 0 || $origMinY !== 0) {
+            $transformations[] = 'translate(' . (-$origMinX) . ', ' . (-$origMinY) . ')';
+        }
+
         if ($transformations) {
             $group = $svg->firstElementChild;
             if (!$group || $group->nodeName !== 'g') {
@@ -77,7 +88,8 @@ final readonly class Hieroglyph extends Block
             $group->setAttribute('transform', implode(' ', $transformations));
         }
 
-        return new RenderBox($svg, $box);
+        // The content has been normalized to the origin, so the box origin is now (0, 0).
+        return new RenderBox($svg, new ViewBox(0, 0, $box->width, $box->height));
     }
 
     private function missingGlyph(RenderContext $context): RenderBox
