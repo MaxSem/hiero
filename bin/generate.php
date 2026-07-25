@@ -29,6 +29,8 @@ saveData(
 
 echo "Generating phonetics arrays.\n";
 $gardinerToPhonetic = readPhonetics("$destDir/phonetics.txt");
+// Phonemes have some codes like J* that are present neither in actual Gardiner's list nor in Unicode
+$gardinerToPhonetic = array_intersect_key($gardinerToPhonetic, $gardinerToChar);
 $phoneticToGardiner = array_flip($gardinerToPhonetic);
 
 $phonetics = array_values($gardinerToPhonetic);
@@ -149,7 +151,7 @@ function readPhonetics(string $filename): array
             bail("Could not parse line '$line'");
         }
 
-        $result[$parts[0]] = $parts[1];
+        $result[ucfirst($parts[0])] = $parts[1];
     }
 
     return $result;
