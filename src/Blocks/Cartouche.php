@@ -8,6 +8,9 @@ use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
 
+/**
+ * https://en.wikipedia.org/wiki/Cartouche
+ */
 final readonly class Cartouche extends BoundedBlock
 {
     private const REVERSE_START = '<2';
@@ -69,8 +72,9 @@ final readonly class Cartouche extends BoundedBlock
 
         // Create path element
         $svg = $context->createSvgElement();
-        $svg->setAttribute('class', 'cartouche');
+        $svg->setAttribute('class', 'cartouche-block');
         $pathElement = $context->createElement('path');
+        $pathElement->setAttribute('class', 'cartouche');
         $pathElement->setAttribute('stroke', 'currentColor');
         $pathElement->setAttribute('stroke-width', (string)$lineWidth);
         $pathElement->setAttribute('fill', 'none');

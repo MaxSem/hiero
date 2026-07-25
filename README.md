@@ -1,4 +1,7 @@
-# Hiero is an Egyptian Hieroglyphics to SVG renderer in pure PHP
+# Egyptian Hieroglyphics to SVG renderer in pure PHP
+
+It renders [Manuel de Codage](https://www.catchpenny.org/codage/) markup. 
+
 ![Example output](doc/example.svg)
 # Installation
     composer install maxsem/hiero
@@ -16,7 +19,7 @@ You'll need Python and FontForge module for it to export SVGs from fonts.
 ```php
 $tokenizer = new Tokenizer();
 
-// All these parameters are optional 
+// All these parameters are optional
 $parseOptions = new ParseOptions(
     throwOnErrors: true,       // See #Error handling
     logErrorBacktraces: false, // See #Error handling
@@ -30,9 +33,8 @@ $renderOptions = new RenderOptions(
     color: 'black',            // Hieroglyph color: valid CSS color or null to not set and default to black.
     background: 'white',       // Background: CSS color or null for transparent.
 
-    // Content of rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
-    style: ".cartouche { color: red }\n" // color the cartouche red
-        . '.glyph { color: black }',     // But keep the hieroglyphs inside black
+    // Content of the rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
+    style: '.cartouche { color: red }' // color the cartouche red
 );
 $font = Font::fromPath('path/to/font');
 // Or
@@ -40,7 +42,7 @@ $font = Font::fromComposerPackage('package/name');
 
 $renderer = new Renderer($renderOptions, $font);
 
-$parseOuptut = $parser->parse('< A1\-B1 >');
+$parseOuptut = $parser->parse('< D10:G16-A46\-C2-L1 >');
 $renderOuptut = $renderer->render($parseOuptut->result);
 
 file_put_contents('result.svg', $renderOuptut->svg);

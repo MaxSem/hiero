@@ -95,8 +95,9 @@ final readonly class HwtCartouche extends BoundedBlock
 
         // Create path element
         $svg = $context->createSvgElement();
-        $svg->setAttribute('class', 'cartouche hwt-cartouche');
+        $svg->setAttribute('class', 'cartouche-block');
         $pathElement = $context->createElement('path');
+        $pathElement->setAttribute('class', 'hwt-cartouche');
         $pathElement->setAttribute('stroke', 'currentColor');
         $pathElement->setAttribute('stroke-width', (string)$lineWidth);
         $pathElement->setAttribute('fill', 'none');
