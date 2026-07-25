@@ -17,17 +17,8 @@ You'll need Python and FontForge module for it to export SVGs from fonts.
 # Usage
 
 ```php
-$tokenizer = new Tokenizer();
-
 // All these parameters are optional
-$parseOptions = new ParseOptions(
-    throwOnErrors: true,       // See #Error handling
-    logErrorBacktraces: false, // See #Error handling
-);
-$parser = new Parser($tokenizer, $parseOptions);
-
-// All these parameters are optional
-$renderOptions = new RenderOptions(
+$options = new Options(
     throwOnErrors: true,       // See #Error handling
     logErrorBacktraces: false, // See #Error handling
     color: 'black',            // Hieroglyph color: valid CSS color or null to not set and default to black.
@@ -40,10 +31,9 @@ $font = Font::fromPath('path/to/font');
 // Or
 $font = Font::fromComposerPackage('package/name');
 
-$renderer = new Renderer($renderOptions, $font);
+$mdc = new ManuelDeCodage($options, $font);
 
-$parseOuptut = $parser->parse('< D10:G16-A46\-C2-L1 >');
-$renderOuptut = $renderer->render($parseOuptut->result);
+$renderOutput = $mdc->parseAndRender('< D10:G16-A46\-C2-L1 >');
 
 file_put_contents('result.svg', $renderOuptut->svg);
 ```

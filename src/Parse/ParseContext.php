@@ -5,17 +5,19 @@ declare(strict_types=1);
 namespace MaxSem\Hiero\Parse;
 
 use MaxSem\Hiero\ErrorHandler;
+use MaxSem\Hiero\Options;
 
-final class ParseContext
+final readonly class ParseContext
 {
-    public readonly ErrorHandler $errors;
+    public ErrorHandler $errors;
 
     public function __construct(
-        private readonly ParseOptions $options,
+        private Options $options,
     ) {
         $this->errors = new ErrorHandler(
-            $this->options,
             ParseException::class,
+            $this->options->throwOnErrors,
+            $this->options->logErrorBacktraces,
         );
     }
 }

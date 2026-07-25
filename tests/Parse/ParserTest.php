@@ -14,8 +14,8 @@ use MaxSem\Hiero\Blocks\UnrecognizedMarkup;
 use MaxSem\Hiero\Blocks\VoidBlock;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroglyphModifiers;
+use MaxSem\Hiero\Options;
 use MaxSem\Hiero\Parse\ParseContext;
-use MaxSem\Hiero\Parse\ParseOptions;
 use MaxSem\Hiero\Parse\Parser;
 use MaxSem\Hiero\Parse\Tokenizer;
 use PHPUnit\Framework\TestCase;
@@ -58,8 +58,9 @@ class ParserTest extends TestCase
             self::fail('Invalid test data: hieroglyph and text should not both be empty');
         }
 
-        $parser = new Parser(new Tokenizer(), new ParseOptions());
-        $context = new ParseContext(new ParseOptions(throwOnErrors: false));
+        $options = new Options(throwOnErrors: false);
+        $parser = new Parser(new Tokenizer(), $options);
+        $context = new ParseContext($options);
 
         $block = $parser->parseHieroglyph($input, $context);
 
@@ -168,7 +169,7 @@ class ParserTest extends TestCase
             self::fail('Test needs at leas one line assertion');
         }
 
-        $parser = new Parser(new Tokenizer(), new ParseOptions());
+        $parser = new Parser(new Tokenizer(), new Options());
         $output = $parser->parse($input);
         $result = $output->result;
 

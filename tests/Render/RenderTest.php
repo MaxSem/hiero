@@ -7,11 +7,10 @@ namespace Tests\Hiero\Render;
 use Imagick;
 use ImagickPixel;
 use MaxSem\Hiero\Font;
-use MaxSem\Hiero\Parse\ParseOptions;
+use MaxSem\Hiero\Options;
 use MaxSem\Hiero\Parse\Parser;
 use MaxSem\Hiero\Parse\Tokenizer;
 use MaxSem\Hiero\Render\Renderer;
-use MaxSem\Hiero\Render\RenderOptions;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
@@ -53,12 +52,13 @@ class RenderTest extends TestCase
      */
     public function testRendering(string $markup, array $tests, array $errors = []): void
     {
-        $parser = new Parser(new Tokenizer(), new ParseOptions());
+        $options = new Options(throwOnErrors: false);
+
+        $parser = new Parser(new Tokenizer(), new Options());
         $parseOutput = $parser->parse($markup);
 
         $font = Font::fromPath(__DIR__ . '/data/font');
-        $renderOptions = new RenderOptions(throwOnErrors: false);
-        $renderer = new Renderer($renderOptions, $font);
+        $renderer = new Renderer($options, $font);
 
         $renderOutput = $renderer->render($parseOutput->result);
 

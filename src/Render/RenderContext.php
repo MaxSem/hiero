@@ -9,6 +9,7 @@ use DOMElement;
 use MaxSem\Hiero\ErrorHandler;
 use MaxSem\Hiero\Font;
 use MaxSem\Hiero\HieroException;
+use MaxSem\Hiero\Options;
 
 final class RenderContext
 {
@@ -22,10 +23,14 @@ final class RenderContext
     private array $glyphsEncountered = [];
 
     public function __construct(
-        public readonly RenderOptions $options,
+        public readonly Options $options,
         public readonly Font $font,
     ) {
-        $this->errors = new ErrorHandler($this->options, RenderException::class);
+        $this->errors = new ErrorHandler(
+            RenderException::class,
+            $this->options->throwOnErrors,
+            $this->options->logErrorBacktraces,
+        );
         $this->dom = new DOMDocument();
     }
 

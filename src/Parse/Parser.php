@@ -14,6 +14,7 @@ use MaxSem\Hiero\Blocks\UnrecognizedMarkup;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;
+use MaxSem\Hiero\Options;
 use MaxSem\Hiero\Phonetics;
 use MaxSem\Hiero\Unicode;
 
@@ -26,7 +27,7 @@ readonly class Parser
 {
     public function __construct(
         private Tokenizer $tokenizer,
-        private ParseOptions $options,
+        private Options $options,
     ) {
     }
 
