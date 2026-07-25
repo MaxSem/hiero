@@ -22,7 +22,7 @@ class ManuelDeCodage
 
     public function parseAndRender(string $markup): RenderOutput
     {
-        $tokenizer = new Tokenizer();
+        $tokenizer = new Tokenizer($this->options->maxTokens);
         $parser = new Parser($tokenizer, $this->options);
         $parseOutput = $parser->parse($markup);
 

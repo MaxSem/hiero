@@ -21,12 +21,14 @@ You'll need Python and FontForge module for it to export SVGs from fonts.
 $options = new Options(
     throwOnErrors: true,       // See #Error handling
     logErrorBacktraces: false, // See #Error handling
+    maxTokens: 1000,           // Maximum number of tokens to parse/render or null for no limit. MaxTokensException will be thrown if exceeded. Protects against resource exhaustion.
     color: 'black',            // Hieroglyph color: valid CSS color or null to not set and default to black.
     background: 'white',       // Background: CSS color or null for transparent.
 
     // Content of the rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
     style: '.cartouche { color: red }' // color the cartouche red
 );
+
 $font = Font::fromPath('path/to/font');
 // Or
 $font = Font::fromComposerPackage('package/name');

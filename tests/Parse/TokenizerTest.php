@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Hiero\Parse;
 
+use MaxSem\Hiero\Parse\MaxTokensException;
 use MaxSem\Hiero\Parse\Tokenizer;
 use PHPUnit\Framework\TestCase;
 
@@ -54,5 +55,16 @@ class TokenizerTest extends TestCase
             [ 'A1*(B1-C1)', [ 'A1', '*', '(', 'B1', '-', 'C1', ')'] ],
             [ 'A1:(B1-C1):D1', [ 'A1', ':', '(', 'B1', '-', 'C1', ')', ':', 'D1'] ],
         ];
+    }
+
+    public function testMaxTokens(): void
+    {
+        $t = new Tokenizer(5);
+
+        // No exception
+        $t->tokenize('A1-B1-C1');
+
+        self::expectException(MaxTokensException::class);
+        $t->tokenize('A1-B1-C1-');
     }
 }

@@ -10,7 +10,14 @@ final readonly class Tokenizer
 {
     private const DELIMITER_REGEX = '/([-\s]+)/';
 
+    public function __construct(
+        private ?int $maxTokens = null,
+    ) {
+    }
+
     /**
+     * @throws MaxTokensException
+     *
      * @return string[]
      */
     public function tokenize(string $input): array
@@ -51,6 +58,10 @@ final readonly class Tokenizer
 
             if (Token::isVoid($token)) {
                 $result[] = Token::SEPARATOR;
+            }
+
+            if ($this->maxTokens && count($result) > $this->maxTokens) {
+                throw new MaxTokensException($this->maxTokens);
             }
         }
 

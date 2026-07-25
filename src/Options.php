@@ -18,6 +18,11 @@ final readonly class Options
          */
         public bool $logErrorBacktraces = false,
         /**
+         * @var int|null Maximum number of tokens to parse/render or null for no limit. MaxTokensException will be
+         *               thrown if exceeded. Protects against resource exhaustion.
+         */
+        public ?int $maxTokens = null,
+        /**
          * @var string|null Foreground color: valid CSS color or null to not set and default to black.
          */
         public ?string $color = null,
