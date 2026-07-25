@@ -26,8 +26,8 @@ class PhoneticsTest extends TestCase
             ['p', 'p'],
             ['P', 'p'],
             ['msa', 'mSa'],
-            ['x', 'x'],
-            ['X', 'X'],
+            ['t', 't'],
+            ['T', 'T'],
             ['DbA', 'DbA'],
             ['dba', 'DbA'],
         ];
@@ -47,8 +47,8 @@ class PhoneticsTest extends TestCase
             ['', null],
             ['test', null],
             ['тест', null],
-            ['x', 'J1'],
-            ['X', 'F32'],
+            ['t', 'X1'],
+            ['T', 'V13'],
             ['iry', 'A47'],
             ['IRy', 'A47'],
         ];
