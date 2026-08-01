@@ -31,16 +31,21 @@ class Font
             throw new HieroException("Font path '$path' is invalid or doesn't contain a valid metadata file.");
         }
 
-        [
-            'version' => $version,
-            'metadata' => $this->metadata,
-            'boundingBox' => $boundingBox,
-            'characters' => $this->characters
-        ] = require($filename);
+        $data = require($filename);
 
+        $version = $data['version'] ?? null;
+        if ($version === null) {
+            throw new HieroException("Font metadata file '$path' is invalid.");
+        }
         if ($version != self::FONT_VERSION) {
             throw new HieroException("Font version $version is not supported.");
         }
+
+        [
+            'metadata' => $this->metadata,
+            'boundingBox' => $boundingBox,
+            'characters' => $this->characters
+        ] = $data;
 
         $this->boundingBox = new ViewBox(...$boundingBox);
         $this->defaultSize = new ViewBox(...reset($this->characters));
