@@ -1,6 +1,6 @@
 # Egyptian Hieroglyphics to SVG renderer in pure PHP
 
-It renders [Manuel de Codage](https://www.catchpenny.org/codage/) markup. 
+It renders [Manuel de Codage](https://www.catchpenny.org/codage/) markup with [Gardiner Codes](https://www.unicode.org/L2/L2005/05313-Gardiner28-57.pdf). 
 
 ![Example output](doc/example.svg)
 # Installation
