@@ -28,21 +28,15 @@ saveData(
 );
 
 echo "Generating phonetics arrays.\n";
-$gardinerToPhonetic = readPhonetics("$destDir/phonetics.txt");
-// Phonemes have some codes like J* that are present neither in actual Gardiner's list nor in Unicode
-$gardinerToPhonetic = array_intersect_key($gardinerToPhonetic, $gardinerToChar);
-$phoneticToGardiner = array_flip($gardinerToPhonetic);
+$phoneticToGardiner = readPhonetics("$destDir/phonetics.txt", $gardinerToChar);
 
-$phonetics = array_values($gardinerToPhonetic);
-$phoneticsLc = array_map(strtolower(...), $phonetics);
-$lowerCaseIndex = array_combine($phoneticsLc, $phonetics);
+$phoneticsLc = makePhoneticsLc($phoneticToGardiner);
 
 saveData(
     "$destDir/phonetics.php",
     [
-        'gardinerToPhonetic' => $gardinerToPhonetic,
         'phoneticToGardiner' => $phoneticToGardiner,
-        'lowerCaseIndex' => $lowerCaseIndex,
+        'lowerCaseIndex' => $phoneticsLc,
     ]
 );
 
@@ -134,7 +128,12 @@ function getHieroglyphCategories(array $unicodeData): array
     return $categories;
 }
 
-function readPhonetics(string $filename): array
+/**
+ * @param string $filename
+ * @param array<string, string> $gardinerToChar
+ * @return array<string, string>
+ */
+function readPhonetics(string $filename, array $gardinerToChar): array
 {
     $lines = file($filename) or bail("Could not read $filename");
 
@@ -151,7 +150,43 @@ function readPhonetics(string $filename): array
             bail("Could not parse line '$line'");
         }
 
-        $result[ucfirst($parts[0])] = $parts[1];
+        $phoneme = $parts[1];
+        $gardiner = ucfirst($parts[0]);
+
+        if (!isset($gardinerToChar[$gardiner])) {
+            // Phonemes have some codes like J* that are present neither in actual Gardiner's list nor in Unicode
+            continue;
+        }
+
+        $result[$phoneme] = $gardiner;
+    }
+
+    return $result;
+}
+
+/**
+* @param array<string|int, string> $phoneticToGardiner
+* @return array<string, string>
+ */
+function makePhoneticsLc(array $phoneticToGardiner): array
+{
+    $result = [];
+
+    // First, fill the array with lowercased phonemes
+    foreach ($phoneticToGardiner as $phoneme => $gardiner) {
+        $lower = strtolower((string)$phoneme);
+        if ($lower !== $phoneme) {
+            $result[$lower] = $phoneme;
+        }
+    }
+
+    // Then, overwrite conflicting lowercased phonemes with those naturally lowercase
+    // so that the latter had higher precedence.
+    foreach ($phoneticToGardiner as $phoneme => $gardiner) {
+        $lower = strtolower((string)$phoneme);
+        if ($lower === $phoneme) {
+            $result[$lower] = $phoneme;
+        }
     }
 
     return $result;

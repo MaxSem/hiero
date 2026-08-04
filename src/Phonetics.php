@@ -7,9 +7,6 @@ namespace MaxSem\Hiero;
 final class Phonetics
 {
     /** @var array<string, string> */
-    private static array $gardinerToPhonetic = [];
-
-    /** @var array<string, string> */
     private static array $phoneticToGardiner = [];
 
     /** @var array<string, string> */
@@ -25,9 +22,9 @@ final class Phonetics
             return $phonetic;
         }
 
-        $phonetic = strtolower($phonetic);
+        $lower = strtolower($phonetic);
 
-        return self::$lowerCaseIndex[$phonetic] ?? null;
+        return self::$lowerCaseIndex[$lower] ?? null;
     }
 
     public static function translateToGardiner(string $phonetic): ?string
@@ -35,18 +32,6 @@ final class Phonetics
         $phonetic = self::normalize($phonetic);
 
         return self::$phoneticToGardiner[$phonetic] ?? null;
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    public static function gardinerToPhonetic(): array
-    {
-        if (!self::$gardinerToPhonetic) {
-            self::load();
-        }
-
-        return self::$gardinerToPhonetic;
     }
 
     /**
@@ -78,7 +63,6 @@ final class Phonetics
         $path = __DIR__ . '/../data/phonetics.php';
 
         [
-            'gardinerToPhonetic' => self::$gardinerToPhonetic,
             'phoneticToGardiner' => self::$phoneticToGardiner,
             'lowerCaseIndex' => self::$lowerCaseIndex,
         ] = require $path;

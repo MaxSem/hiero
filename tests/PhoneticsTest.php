@@ -51,6 +51,8 @@ class PhoneticsTest extends TestCase
             ['T', 'V13'],
             ['iry', 'A47'],
             ['IRy', 'A47'],
+            ['ra', 'N5'],
+            ['rA', 'D21'],
         ];
     }
 }
