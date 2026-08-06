@@ -122,6 +122,15 @@ class RenderTest extends TestCase
                     [250, 70, 'yellow'],
                 ],
             ],
+            'cartouche is not stretched to fill the line' => [
+                'A1 < A1 >',
+                [
+                    [50, 50, 'red'],
+                    [170, 50, 'red'],
+                    [238, 50, 'white'], // void inside the frame (would be red if the cartouche were stretched)
+                    [260, 50, 'white'], // rounded right end of the frame (would be red if stretched)
+                ],
+            ],
         ];
     }
 

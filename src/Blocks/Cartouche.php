@@ -91,6 +91,10 @@ final readonly class Cartouche extends BoundedBlock
 
         $viewBox = new ViewBox(0, 0, $cartoucheWidth, $cartoucheHeight);
         $svg->setAttribute('viewBox', $viewBox->toString());
+        // Without an explicit size a nested <svg> with a viewBox stretches to 100% of the parent
+        // viewport; pin it to its own dimensions so it renders 1:1 at its position in the line.
+        $svg->setAttribute('width', (string)$cartoucheWidth);
+        $svg->setAttribute('height', (string)$cartoucheHeight);
 
         return new RenderBox($svg, $viewBox);
     }
