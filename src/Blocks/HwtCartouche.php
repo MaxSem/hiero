@@ -26,6 +26,7 @@ final readonly class HwtCartouche extends BoundedBlock
         $lineWidth = intval($context->font->defaultSize->height / 18); // @todo: something better?
         $margin = $halfStroke = intval($lineWidth / 2);
         $cartoucheHeight = $contents->viewBox->height + $lineWidth * 2 + $margin * 2;
+        $baseline = $contents->viewBox->height + $lineWidth + $margin;
         $sideWidth = intval($cartoucheHeight / 2);
         $boxSide = intval($cartoucheHeight / 3);
         $cartoucheWidth = $sideWidth * 2 + $contents->viewBox->width;
@@ -119,6 +120,6 @@ final readonly class HwtCartouche extends BoundedBlock
         $svg->setAttribute('width', (string)$cartoucheWidth);
         $svg->setAttribute('height', (string)$cartoucheHeight);
 
-        return new RenderBox($svg, $viewBox);
+        return new RenderBox($svg, $viewBox, $baseline);
     }
 }

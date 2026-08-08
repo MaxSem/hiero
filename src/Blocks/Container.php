@@ -39,11 +39,12 @@ abstract readonly class Container extends Block
         $rendered = array_map(fn (Block $b) => $b->render($context), $blocks);
         $viewBoxes = array_map(fn (RenderBox $b) => $b->viewBox, $rendered);
         $maxHeight = ViewBox::maxHeight($viewBoxes);
+        $maxBaseline = RenderBox::maxBaseline($rendered);
 
         $line = $context->createSvgElement();
         $curX = 0;
         foreach ($rendered as $renderBox) {
-            $y = $maxHeight - $renderBox->viewBox->height;
+            $y = $maxBaseline - $renderBox->getBaseline();
             $renderBox->output->setAttribute('x', (string)$curX);
             $renderBox->output->setAttribute('y', (string)$y);
             $line->appendChild($renderBox->output);
@@ -52,6 +53,6 @@ abstract readonly class Container extends Block
 
         $resultingBox = new ViewBox(0, 0, $curX, $maxHeight);
 
-        return new RenderBox($line, $resultingBox);
+        return new RenderBox($line, $resultingBox, $maxBaseline);
     }
 }

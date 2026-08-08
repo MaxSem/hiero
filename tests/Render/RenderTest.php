@@ -75,6 +75,7 @@ class RenderTest extends TestCase
 
                 $pixel = $image->getImagePixelColor($x, $y);
                 self::assertSame($expectedPixel->getColor(), $pixel->getColor(), "Pixel must be $color");
+                self::assertSame(100, $renderOutput->charHeight);
             } catch (AssertionFailedError $exception) {
                 if (getenv('DUMP_TEST_IMAGES') !== false) {
                     $image->writeImage('test.png');
@@ -122,10 +123,14 @@ class RenderTest extends TestCase
                     [250, 70, 'yellow'],
                 ],
             ],
-            'cartouche is not stretched to fill the line' => [
+            'cartouche interaction with other blocks' => [
                 'A1 < A1 >',
                 [
+                    // Hieroglyph outside the cartouche should be aligned to the baseline of the hieroglyph inside it
+                    [1, 1, 'white'],
                     [50, 50, 'red'],
+                    [50, 110, 'white'],
+
                     [170, 50, 'red'],
                     [238, 50, 'white'], // void inside the frame (would be red if the cartouche were stretched)
                     [260, 50, 'white'], // rounded right end of the frame (would be red if stretched)

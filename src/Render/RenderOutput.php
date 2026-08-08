@@ -16,6 +16,10 @@ final readonly class RenderOutput
          * @var array<Error>
          */
         public array $errors,
+        /**
+         * @var int Height of a single character in SVG units, useful for scaling the SVG on the page
+         */
+        public int $charHeight,
     ) {
     }
 }

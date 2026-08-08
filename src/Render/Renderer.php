@@ -32,6 +32,6 @@ readonly class Renderer
         $context->dom->appendChild($box->output);
         $xml = (string)$context->dom->saveXML();
 
-        return new RenderOutput($xml, $box->viewBox, $context->errors->get());
+        return new RenderOutput($xml, $box->viewBox, $context->errors->get(), $this->font->defaultSize->height);
     }
 }
