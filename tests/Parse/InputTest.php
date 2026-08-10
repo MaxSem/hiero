@@ -8,6 +8,7 @@ use MaxSem\Hiero\Blocks\Cartouche;
 use MaxSem\Hiero\Blocks\Parentheses;
 use MaxSem\Hiero\Parse\Input;
 use MaxSem\Hiero\Parse\Tokenizer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class InputTest extends TestCase
@@ -53,9 +54,7 @@ class InputTest extends TestCase
         self::assertSame('bcd', $this->inputToString($input));
     }
 
-    /**
-     * @dataProvider provideFindMatchingCloser
-     */
+    #[DataProvider('provideFindMatchingCloser')]
     public function testFindMatchingCloser(array $tokens, string $closerClass, ?string $expected, int $skip = 0): void
     {
         $input = new Input($tokens);
@@ -94,8 +93,8 @@ class InputTest extends TestCase
 
     /**
      * @param string[] $expected
-     * @dataProvider provideLines
      */
+    #[DataProvider('provideLines')]
     public function testLines(string $text, array $expected): void
     {
         $tokens = (new Tokenizer())->tokenize($text);

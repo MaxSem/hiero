@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Tests\Hiero;
 
 use MaxSem\Hiero\Phonetics;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class PhoneticsTest extends TestCase
 {
-    /**
-     * @dataProvider provideNormalize
-     */
+    #[DataProvider('provideNormalize')]
     public function testNormalize(string $input, ?string $expected): void
     {
         self::assertSame($expected, Phonetics::normalize($input));
@@ -33,9 +32,7 @@ class PhoneticsTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideTranslate
-     */
+    #[DataProvider('provideTranslate')]
     public function testTranslate(string $input, ?string $expected): void
     {
         self::assertSame($expected, Phonetics::translateToGardiner($input));

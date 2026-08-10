@@ -12,6 +12,8 @@ use MaxSem\Hiero\Parse\Parser;
 use MaxSem\Hiero\Parse\Tokenizer;
 use MaxSem\Hiero\Render\Renderer;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\BeforeClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
@@ -30,26 +32,19 @@ use Symfony\Component\Process\Process;
  */
 class RenderTest extends TestCase
 {
-    protected function setUp(): void
+    #[BeforeClass]
+    public static function before(): void
     {
-        static $checked = null;
-
-        if (!$checked) {
-            if (!class_exists(Imagick::class)) {
-                $this->markTestSkipped('ImageMagick not found, skipping rendering tests');
-            }
-
-            if (!$this->rsvgDetected()) {
-                $this->markTestSkipped('rsvg not found, skipping rendering tests');
-            }
+        if (!class_exists(Imagick::class)) {
+            self::markTestSkipped('ImageMagick not found, skipping rendering tests');
         }
 
-        parent::setUp();
+        if (!self::rsvgDetected()) {
+            self::markTestSkipped('rsvg not found, skipping rendering tests');
+        }
     }
 
-    /**
-     * @dataProvider provideRendering
-     */
+    #[DataProvider('provideRendering')]
     public function testRendering(string $markup, array $tests, array $errors = []): void
     {
         $options = new Options(throwOnErrors: false);
@@ -153,16 +148,10 @@ class RenderTest extends TestCase
         return $image;
     }
 
-    private ?bool $rsvgDetected = null;
-
-    private function rsvgDetected(): bool
+    private static function rsvgDetected(): bool
     {
-        if ($this->rsvgDetected === null) {
-            $process = new Process(['rsvg-convert', '--version']);
-            $process->run();
-            $this->rsvgDetected = $process->isSuccessful();
-        }
-
-        return $this->rsvgDetected;
+        $process = new Process(['rsvg-convert', '--version']);
+        $process->run();
+        return $process->isSuccessful();
     }
 }

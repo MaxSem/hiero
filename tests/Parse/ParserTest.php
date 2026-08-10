@@ -18,6 +18,7 @@ use MaxSem\Hiero\Options;
 use MaxSem\Hiero\Parse\ParseContext;
 use MaxSem\Hiero\Parse\Parser;
 use MaxSem\Hiero\Parse\Tokenizer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -44,9 +45,7 @@ class ParserTest extends TestCase
         self::$t3Modifiers = new HieroglyphModifiers('\\t3', 270, true);
     }
 
-    /**
-     * @dataProvider provideParseHieroglyph
-     */
+    #[DataProvider('provideParseHieroglyph')]
     public function testParseHieroglyph(
         string $input,
         ?string $hieroglyph = null,
@@ -160,9 +159,7 @@ class ParserTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideParse
-     */
+    #[DataProvider('provideParse')]
     public function testParse(string $input, callable ...$lineAssertions): void
     {
         if (!$lineAssertions) {

@@ -6,13 +6,12 @@ namespace Tests\Hiero\Parse;
 
 use MaxSem\Hiero\Parse\MaxTokensException;
 use MaxSem\Hiero\Parse\Tokenizer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TokenizerTest extends TestCase
 {
-    /**
-     * @dataProvider provideTokenize
-     */
+    #[DataProvider('provideTokenize')]
     public function testTokenize(string $input, array $expected): void
     {
         $t = new Tokenizer();
