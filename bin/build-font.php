@@ -3,7 +3,15 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+if (is_readable(dirname(__DIR__) . '/vendor/autoload.php')) {
+    // Running from the hiero repo
+    require dirname(__DIR__) . '/vendor/autoload.php';
+} elseif (is_readable(dirname(__DIR__) . '/../../autoload.php')) {
+    // Running from an installed package
+    require dirname(__DIR__) . '/../../autoload.php';
+} else {
+    die("Error: autoload.php not found\n");
+}
 
 const FIRST_CHAR = 0x13000;
 const LAST_CHAR = 0x1342F;
