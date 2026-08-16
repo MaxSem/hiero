@@ -3,6 +3,10 @@
 
 declare(strict_types=1);
 
+if (PHP_SAPI !== 'cli') {
+    die;
+}
+
 if (is_readable(dirname(__DIR__) . '/vendor/autoload.php')) {
     // Running from the hiero repo
     require dirname(__DIR__) . '/vendor/autoload.php';
