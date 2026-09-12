@@ -29,7 +29,6 @@ final class RenderContext
         $this->errors = new ErrorHandler(
             RenderException::class,
             $this->options->throwOnErrors,
-            $this->options->logErrorBacktraces,
         );
         $this->dom = new DOMDocument();
     }

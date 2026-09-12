@@ -12,7 +12,6 @@ class ErrorHandler
          */
         private readonly string $exceptionClass,
         private readonly bool $throwOnErrors,
-        private readonly bool $logErrorBacktraces,
     ) {
     }
 
@@ -24,12 +23,7 @@ class ErrorHandler
      */
     public function add(string $code, mixed ...$params): void
     {
-        $backtrace = match ($this->logErrorBacktraces && !$this->throwOnErrors) {
-            true => debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS),
-            default => null,
-        };
-
-        $error = new Error($backtrace, $code, $params);
+        $error = new Error($code, $params);
 
         if ($this->throwOnErrors) {
             throw new $this->exceptionClass($error);

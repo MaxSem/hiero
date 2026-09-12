@@ -17,7 +17,6 @@ final readonly class ParseContext
         $this->errors = new ErrorHandler(
             ParseException::class,
             $this->options->throwOnErrors,
-            $this->options->logErrorBacktraces,
         );
     }
 }

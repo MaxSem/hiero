@@ -13,11 +13,6 @@ final readonly class Options
          */
         public bool $throwOnErrors = true,
         /**
-         * @var bool If $throwOnErrors === false, should error information include backtraces? Useful for debugging,
-         *           but not much so in production.
-         */
-        public bool $logErrorBacktraces = false,
-        /**
          * @var int|null Maximum number of tokens to parse/render or null for no limit. MaxTokensException will be
          *               thrown if exceeded. Protects against resource exhaustion.
          */
