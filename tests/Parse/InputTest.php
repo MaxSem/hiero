@@ -21,7 +21,7 @@ class InputTest extends TestCase
         self::assertNull($input->current());
         self::assertNull($input->next());
 
-        // Ensure next() hasn't made something funny
+        // Ensure next() hasn't done something funny
         self::assertTrue($input->eof());
     }
 

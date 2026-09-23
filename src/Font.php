@@ -4,18 +4,23 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero;
 
+use MaxSem\Hiero\Render\Box;
+
 class Font
 {
     /**
      * Only fonts generated with this version are supported
      */
-    public const FONT_VERSION = 1;
+    public const FONT_VERSION = 2;
 
     /** @var array<string, mixed> */
     private array $metadata;
 
     /** @var array<string, int[]> */
     private array $characters;
+
+    /** @var array<string, float[]> */
+    private array $ink;
 
     public readonly ViewBox $boundingBox;
 
@@ -44,7 +49,8 @@ class Font
         [
             'metadata' => $this->metadata,
             'boundingBox' => $boundingBox,
-            'characters' => $this->characters
+            'characters' => $this->characters,
+            'ink' => $this->ink,
         ] = $data;
 
         $this->boundingBox = new ViewBox(...$boundingBox);
@@ -93,6 +99,11 @@ class Font
         }
 
         return $svg;
+    }
+
+    public function getInk(string $char): ?Box
+    {
+        return isset($this->ink[$char]) ? new Box(...$this->ink[$char]) : null;
     }
 
     /**

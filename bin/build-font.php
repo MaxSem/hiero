@@ -3,6 +3,8 @@
 
 declare(strict_types=1);
 
+use MaxSem\Hiero\Build\PathParser;
+
 if (PHP_SAPI !== 'cli') {
     die;
 }
@@ -52,7 +54,7 @@ if (!is_dir($dest)) {
     mkdir($dest, recursive: true);
 }
 
-[$characters, $boundingBox] = processSvgFiles($rawDataDir, $dest, $unicodeData['charToGardiner']);
+[$characters, $boundingBox, $ink] = processSvgFiles($rawDataDir, $dest, $unicodeData['charToGardiner']);
 
 $metadata = json_decode(file_get_contents("$rawDataDir/_font.json"), true, flags: JSON_THROW_ON_ERROR)
     or bail("Coundn't read font metadata.");
@@ -62,6 +64,7 @@ $result = [
     'metadata' => $metadata,
     'boundingBox' => $boundingBox,
     'characters' => $characters,
+    'ink' => $ink,
 ];
 
 saveData("$dest/_font.php", $result);
@@ -105,6 +108,7 @@ function processSvgFiles(string $source, string $dest, array $charToGardiner): a
 
     $result = [];
     $max = [0, 0, 0, 0];
+    $inkResult = [];
 
     foreach (glob("$source/raw*.svg") as $i => $filename) {
         if ($i && $i % 100 === 0) {
@@ -120,8 +124,10 @@ function processSvgFiles(string $source, string $dest, array $charToGardiner): a
             continue;
         }
 
-        $viewBox = processSvg($filename, "$dest/$gardinerCode.svg", $gardinerCode);
+        [$viewBox, $ink] = processSvg($filename, "$dest/$gardinerCode.svg", $gardinerCode);
         $result[$gardinerCode] = $viewBox;
+        $inkResult[$gardinerCode] = $ink->toArray();
+
         $max[0] = min($max[0], $viewBox[0]);
         $max[1] = min($max[1], $viewBox[1]);
         $max[2] = max($max[2], $viewBox[2]);
@@ -132,7 +138,7 @@ function processSvgFiles(string $source, string $dest, array $charToGardiner): a
         bail("No raw*.svg files found in $source, run data/extract-svgs.py first.");
     }
 
-    return [$result, $max];
+    return [$result, $max, $inkResult];
 }
 
 function processSvg(string $source, string $dest, string $gardinerCode): array
@@ -152,6 +158,13 @@ function processSvg(string $source, string $dest, string $gardinerCode): array
     $viewBox = $svg->getAttribute('viewBox');
     if (!preg_match('/^-?\d+ -?\d+ \d+ \d+$/', $viewBox)) {
         bail("No valid viewBox found in $source");
+    }
+
+    $pathParser = new PathParser();
+    $pathParser->parseSvg($doc);
+    $ink = $pathParser->getInk();
+    if (!$ink) {
+        bail("No ink found in $source");
     }
 
     // Put <path> into a <g> so that we could apply SVG transformations to the glyph without altering the attributes
@@ -180,7 +193,9 @@ function processSvg(string $source, string $dest, string $gardinerCode): array
 
     file_put_contents($dest, $contents) ?: bail("Error saving $source");
 
-    return array_map(intval(...), explode(' ', $viewBox));
+    $result = array_map(intval(...), explode(' ', $viewBox));
+
+    return [$result, $ink];
 }
 
 function saveData(string $filename, array $data): void
