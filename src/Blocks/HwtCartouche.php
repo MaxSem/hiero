@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
@@ -120,6 +121,6 @@ final readonly class HwtCartouche extends BoundedBlock
         $svg->setAttribute('width', (string)$cartoucheWidth);
         $svg->setAttribute('height', (string)$cartoucheHeight);
 
-        return new RenderBox($svg, $viewBox, $baseline);
+        return new RenderBox($svg, $viewBox, Ink::fromViewBox($viewBox), $baseline);
     }
 }

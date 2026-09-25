@@ -7,6 +7,7 @@ namespace MaxSem\Hiero\Blocks;
 use MaxSem\Hiero\ErrorCodes;
 use MaxSem\Hiero\HieroException;
 use MaxSem\Hiero\HieroglyphModifiers;
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\Unicode;
@@ -89,7 +90,9 @@ final readonly class Hieroglyph extends Block
         }
 
         // The content has been normalized to the origin, so the box origin is now (0, 0).
-        return new RenderBox($svg, new ViewBox(0, 0, $box->width, $box->height));
+        $viewBox = new ViewBox(0, 0, $box->width, $box->height);
+        $ink = $context->font->getInk($this->code) ?? Ink::fromViewBox($viewBox);
+        return new RenderBox($svg, $viewBox, $ink);
     }
 
     private function missingGlyph(RenderContext $context): RenderBox
@@ -98,6 +101,6 @@ final readonly class Hieroglyph extends Block
         $svg = $context->createSvgElement();
         $box = $context->font->defaultSize;
 
-        return new RenderBox($svg, $box);
+        return new RenderBox($svg, $box, Ink::fromViewBox($box));
     }
 }

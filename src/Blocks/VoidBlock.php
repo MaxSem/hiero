@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
@@ -38,6 +39,6 @@ final readonly class VoidBlock extends Block
         $void->setAttribute('width', (string)$box->width);
         $void->setAttribute('height', (string)$box->height);
 
-        return new RenderBox($void, $box);
+        return new RenderBox($void, $box, Ink::fromViewBox($box));
     }
 }

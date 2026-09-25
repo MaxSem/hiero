@@ -6,7 +6,7 @@ namespace MaxSem\Hiero\Build;
 
 use DOMDocument;
 use Exception;
-use MaxSem\Hiero\Render\Box;
+use MaxSem\Hiero\Render\Ink;
 
 // phpcs:disable PSR2.Methods.FunctionCallSignature.MultipleArguments
 
@@ -24,15 +24,15 @@ class PathParser
     private float $maxY = PHP_INT_MIN;
 
     /**
-     * @return Box|null Ink box or null if no ink was detected
+     * @return Ink|null Ink box or null if no ink was detected
      */
-    public function getInk(): ?Box
+    public function getInk(): ?Ink
     {
         if ($this->minX == PHP_INT_MAX) {
             return null;
         }
 
-        return Box::fromTwoPoints($this->minX, $this->minY, $this->maxX, $this->maxY);
+        return Ink::fromTwoPoints($this->minX, $this->minY, $this->maxX, $this->maxY);
     }
 
     public function parseSvg(DOMDocument $dom): void

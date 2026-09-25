@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero;
 
-use MaxSem\Hiero\Render\Box;
+use MaxSem\Hiero\Render\Ink;
 
 class Font
 {
@@ -101,9 +101,9 @@ class Font
         return $svg;
     }
 
-    public function getInk(string $char): ?Box
+    public function getInk(string $char): ?Ink
     {
-        return isset($this->ink[$char]) ? new Box(...$this->ink[$char]) : null;
+        return isset($this->ink[$char]) ? new Ink(...$this->ink[$char]) : null;
     }
 
     /**

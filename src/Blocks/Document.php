@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
@@ -56,6 +57,6 @@ final readonly class Document extends Container
         $resultingBox = new ViewBox(0, 0, $maxWidth, $y);
         $doc->setAttribute('viewBox', $resultingBox->toString());
 
-        return new RenderBox($doc, $resultingBox);
+        return new RenderBox($doc, $resultingBox, Ink::fromViewBox($resultingBox));
     }
 }

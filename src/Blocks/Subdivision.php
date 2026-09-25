@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
@@ -30,7 +31,9 @@ final readonly class Subdivision extends Container
         $svg->setAttribute('class', 'subdivision');
 
         $height = 0;
+        $ink = new Ink(0, 0, 0, 0);
         foreach ($rendered as $block) {
+            $ink->combineWith(Ink::fromViewBox($block->viewBox), 0, $height);
             $x = ($maxWidth - $block->viewBox->width) / 2;
             $block->output->setAttribute('x', (string)$x);
             $block->output->setAttribute('y', (string)$height);
@@ -48,6 +51,6 @@ final readonly class Subdivision extends Container
         $svg->setAttribute('width', (string)$outerBox->width);
         $svg->setAttribute('height', (string)$outerBox->height);
 
-        return new RenderBox($svg, $outerBox);
+        return new RenderBox($svg, $outerBox, $ink);
     }
 }

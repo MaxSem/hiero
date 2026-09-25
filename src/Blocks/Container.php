@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 use MaxSem\Hiero\ViewBox;
@@ -43,7 +44,10 @@ abstract readonly class Container extends Block
 
         $line = $context->createSvgElement();
         $curX = 0;
+        $ink = new Ink(0, 0, 0, 0);
         foreach ($rendered as $renderBox) {
+            $ink = $ink->combineWith($renderBox->ink, $curX, 0);
+
             $y = $maxBaseline - $renderBox->getBaseline();
             $renderBox->output->setAttribute('x', (string)$curX);
             $renderBox->output->setAttribute('y', (string)$y);
@@ -53,6 +57,6 @@ abstract readonly class Container extends Block
 
         $resultingBox = new ViewBox(0, 0, $curX, $maxHeight);
 
-        return new RenderBox($line, $resultingBox, $maxBaseline);
+        return new RenderBox($line, $resultingBox, $ink, $maxBaseline);
     }
 }

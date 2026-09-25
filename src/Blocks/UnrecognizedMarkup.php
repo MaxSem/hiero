@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Blocks;
 
+use MaxSem\Hiero\Render\Ink;
 use MaxSem\Hiero\Render\RenderBox;
 use MaxSem\Hiero\Render\RenderContext;
 
@@ -42,6 +43,6 @@ final readonly class UnrecognizedMarkup extends Block
 
         $svg->appendChild($text);
 
-        return new RenderBox($svg, $box);
+        return new RenderBox($svg, $box, Ink::fromViewBox($box));
     }
 }

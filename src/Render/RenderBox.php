@@ -12,6 +12,7 @@ final readonly class RenderBox
     public function __construct(
         public DOMElement $output,
         public ViewBox $viewBox,
+        public Ink $ink,
         /**
          * @var int|null Y coordinate of the baseline or null for N/A
          */
