@@ -11,37 +11,55 @@ permissions:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['8.5']
+    runs-on: ${{ matrix.operating-system }}
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v6
 
-    - uses: awalsh128/cache-apt-pkgs-action@v1
-      with:
-        packages: php8.3-imagick librsvg2-bin imagemagick-6-common  libmagickcore-6.q16-7t64 libmagickcore-6.q16-7-extra libmagickwand-6.q16-7t64
-        version: 1.0
+      # Docs: https://github.com/shivammathur/setup-php
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, simplexml, dom, imagick
+          coverage: xdebug
+        env:
+          fail-fast: true
 
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
+      - uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: librsvg2-bin
+          version: 1.0
 
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v3
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
+      - name: Get composer cache directory
+        id: composer-cache
+        shell: bash
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
+      - name: Cache composer dependencies
+        uses: actions/cache@v5
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          # Use composer.json for key, if composer.lock is not committed.
+          # key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
 
-    - name: Run unit tests
-      run: vendor/bin/phpunit tests
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
 
-    - name: PHPCS lint
-      run: vendor/bin/phpcs -s --standard=phpcs.xml
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
-    - name: PHPStan
-      run: vendor/bin/phpstan
+      - name: Run unit tests
+        run: vendor/bin/phpunit tests
+
+      - name: PHPCS lint
+        run: vendor/bin/phpcs -s --standard=phpcs.xml
+
+      - name: PHPStan
+        run: vendor/bin/phpstan
