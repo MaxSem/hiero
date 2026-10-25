@@ -31,6 +31,10 @@ final class Phonetics
     {
         $phonetic = self::normalize($phonetic);
 
+        if (!$phonetic) {
+            return null;
+        }
+
         return self::$phoneticToGardiner[$phonetic] ?? null;
     }
 
