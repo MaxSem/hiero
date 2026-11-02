@@ -97,7 +97,7 @@ class InputTest extends TestCase
     #[DataProvider('provideLines')]
     public function testLines(string $text, array $expected): void
     {
-        $tokens = (new Tokenizer())->tokenize($text);
+        $tokens = new Tokenizer()->tokenize($text);
         $input = new Input($tokens);
         $lines = iterator_to_array($input->lines());
         $lines = array_map(fn (Input $in) => $this->inputToString($in), $lines);

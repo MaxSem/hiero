@@ -4,7 +4,7 @@ It renders [Manuel de Codage](https://www.catchpenny.org/codage/) markup with [G
 
 ![Example output](doc/example.svg)
 # Installation
-    composer install maxsem/hiero
+    composer require maxsem/hiero
 
 # Fonts
 To render something, you need a font, which for this package is a set of SVG files along with some metadata.
@@ -24,7 +24,8 @@ $options = new Options(
     color: 'black',            // Hieroglyph color: valid CSS color or null to not set and default to black.
     background: 'white',       // Background: CSS color or null for transparent.
 
-    // Content of the rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
+    // Content of the rendered SVG's <style> tag or null to not set.
+    // See SVG documentation for how it will interact with the options above.
     style: '.cartouche { color: red }' // color the cartouche red
 );
 
@@ -36,7 +37,7 @@ $mdc = new ManuelDeCodage($options, $font);
 
 $renderOutput = $mdc->parseAndRender('< D10:G16-A46\-C2-L1 >');
 
-file_put_contents('result.svg', $renderOuptut->svg);
+file_put_contents('result.svg', $renderOutput->svg);
 ```
 
 

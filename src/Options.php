@@ -26,7 +26,7 @@ final readonly class Options
          */
         public ?string $background = null,
         /**
-         * Content of rendered SVG's <style> tag or null to not set. Will be overridden by the options above.
+         * Content of rendered SVG's <style> tag or null to not set.
          *
          * @var string|null
          */

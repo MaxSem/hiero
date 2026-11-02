@@ -13,7 +13,7 @@ class RenderException extends LocalizableException
     {
         parent::__construct(
             $error,
-            'Render error: ' . $error->key . ' '
+            'Render error: ' . $error->code . ' '
                 . json_encode($error->params, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
     }

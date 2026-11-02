@@ -4,7 +4,7 @@ all: test phpcs phpstan composer-validate
 
 .PHONY: test
 test:
-	export DUMP_TEST_IMAGES=1 && vendor/bin/phpunit tests
+	export DUMP_TEST_IMAGES=1 && vendor/bin/phpunit
 
 phpcs:
 	 vendor/bin/phpcs -s --standard=phpcs.xml

@@ -194,7 +194,7 @@ function makePhoneticsLc(array $phoneticToGardiner): array
 
 function saveData(string $filename, array $data): void
 {
-    $timestamp = (new DateTime())->format('Y-m-d H:i:s');
+    $timestamp = new DateTime()->format('Y-m-d H:i:s');
     $content = <<<PHP
     <?php
     // DO NOT EDIT, this is an automatically generated file.

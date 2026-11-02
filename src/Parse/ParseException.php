@@ -13,7 +13,7 @@ class ParseException extends LocalizableException
     {
         parent::__construct(
             $error,
-            'Parse error: ' . $error->key . ' '
+            'Parse error: ' . $error->code . ' '
                 . json_encode($error->params, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
     }

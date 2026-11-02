@@ -7,7 +7,7 @@ namespace MaxSem\Hiero;
 final readonly class Error
 {
     public function __construct(
-        public string $key,
+        public string $code,
         /** @var mixed[] */
         public array $params,
     ) {

@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace MaxSem\Hiero\Parse;
 
-use MaxSem\Hiero\HieroException;
+use MaxSem\Hiero\Error;
+use MaxSem\Hiero\ErrorCodes;
+use MaxSem\Hiero\LocalizableException;
 
-class MaxTokensException extends HieroException
+class MaxTokensException extends LocalizableException
 {
     public function __construct(
         public readonly int $maxTokens
     ) {
-        parent::__construct("Maximum number of tokens reached: $maxTokens");
+        parent::__construct(
+            new Error(ErrorCodes::MAX_TOKENS_EXCEEDED, [$maxTokens]),
+            "Maximum number of tokens exceeded: $maxTokens",
+        );
     }
 }

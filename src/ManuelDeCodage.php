@@ -12,7 +12,7 @@ use MaxSem\Hiero\Render\RenderOutput;
 /**
  * Façade that takes care of everything
  */
-class ManuelDeCodage
+readonly class ManuelDeCodage
 {
     public function __construct(
         private readonly Options $options,

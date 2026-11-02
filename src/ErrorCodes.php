@@ -34,4 +34,9 @@ final class ErrorCodes
      * Font is missing glyph for character '$1'
      */
     public const FONT_MISSING_GLYPH = 'font-missing-glyph';
+
+    /**
+     * Maximum number of tokens reached: $1.
+     */
+    public const MAX_TOKENS_EXCEEDED = 'max-tokens-exceeded';
 }

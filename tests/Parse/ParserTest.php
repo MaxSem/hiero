@@ -78,7 +78,7 @@ class ParserTest extends TestCase
             self::assertEmpty($errors);
         } else {
             self::assertCount(1, $errors);
-            $errorCode = $errors[0]->key;
+            $errorCode = $errors[0]->code;
             self::assertSame($expectedError, $errorCode);
         }
     }
