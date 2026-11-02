@@ -36,7 +36,7 @@ final class ErrorCodes
     public const FONT_MISSING_GLYPH = 'font-missing-glyph';
 
     /**
-     * Maximum number of tokens reached: $1.
+     * Maximum number of tokens exceeded: $1.
      */
     public const MAX_TOKENS_EXCEEDED = 'max-tokens-exceeded';
 }

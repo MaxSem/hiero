@@ -6,6 +6,11 @@ namespace MaxSem\Hiero;
 
 final readonly class Options
 {
+    /**
+     * Maximum number of tokens allowed.
+     */
+    public const DEFAULT_TOKEN_LIMIT = 1000;
+
     public function __construct(
         /**
          * @var bool Whether errors in user input should result in an exception being thrown immediately
@@ -16,7 +21,7 @@ final readonly class Options
          * @var int|null Maximum number of tokens to parse/render or null for no limit. MaxTokensException will be
          *               thrown if exceeded. Protects against resource exhaustion.
          */
-        public ?int $maxTokens = null,
+        public ?int $maxTokens = self::DEFAULT_TOKEN_LIMIT,
         /**
          * @var string|null Foreground color: valid CSS color or null to not set and default to black.
          */
